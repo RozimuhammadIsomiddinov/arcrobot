@@ -1,45 +1,20 @@
-import dotenv from "dotenv";
-dotenv.config();
-import db from "../../config/dbconfig.js";
-
-//const db = knex(data);
-
-const selectAllQuery = `
-        SELECT *FROM "order";
-`;
-
-const selectByIDQuery = `
-        SELECT *FROM "order" WHERE id = ?;
-`;
-
-const createConsultQuery = `
-        INSERT INTO "order"(
-        name,
-        phone_number,
-        email,
-        reason
-        )
-        VALUES(?,?,?,?)
-        RETURNING*;
-`;
+import Order from "../../models/order.js";
 
 const selectAll = async () => {
-  const res = await db.raw(selectAllQuery);
-  return res.rows;
+  return await Order.findAll();
 };
+
 const selectByID = async (id) => {
-  const res = await db.raw(selectByIDQuery, [id]);
-  return res.rows;
+  return await Order.findByPk(id);
 };
 
 const createConsult = async (data) => {
-  const res = await db.raw(createConsultQuery, [
-    data.name,
-    data.phone_number,
-    data.email,
-    data.reason,
-  ]);
-  return res.rows[0];
+  return await Order.create({
+    name: data.name,
+    phone_number: data.phone_number,
+    email: data.email,
+    reason: data.reason,
+  });
 };
 
 export { selectAll, selectByID, createConsult };
