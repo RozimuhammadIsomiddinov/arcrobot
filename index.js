@@ -5,6 +5,8 @@ import cors from "cors";
 import consultRoute from "./routes/consult.js";
 import { adminJs, adminRouter } from "./admin.config.js";
 
+import swaggerUi from "swagger-ui-express";
+import swaggerJsDoc from "swagger-jsdoc";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
@@ -35,7 +37,27 @@ app.use(
   })
 );
 
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Cars API",
+      version: "1.0.0",
+      description: "Car management API documentation",
+    },
+    servers: [
+      {
+        url: "http://213.139.210.248:7007",
+      },
+    ],
+  },
+  apis: ["./routes/*.js"],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
 app.use("/public", express.static(path.join(__dirname, "public")));
+app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/consult", consultRoute);
 app.use("/admin", adminRouter);
