@@ -5,6 +5,24 @@ import cors from "cors";
 import consultRoute from "./routes/consult.js";
 import { adminJs, adminRouter } from "./admin.config.js";
 
+import path from "path";
+import { fileURLToPath } from "url";
+import fs from "fs";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const publicFolderPath = path.join(__dirname, "public");
+const imagesFolderPath = path.join(publicFolderPath, "images");
+
+if (!fs.existsSync(publicFolderPath)) {
+  fs.mkdirSync(publicFolderPath);
+  console.log("Public folder created successfully.");
+}
+if (!fs.existsSync(imagesFolderPath)) {
+  fs.mkdirSync(imagesFolderPath);
+  console.log("Images folder created successfully.");
+}
+
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -16,6 +34,8 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE"],
   })
 );
+
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 app.use("/consult", consultRoute);
 app.use("/admin", adminRouter);
