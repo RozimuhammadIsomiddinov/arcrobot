@@ -12,7 +12,7 @@ const ImagePosition = sequelize.define(
     },
     title: DataTypes.STRING,
     top: DataTypes.STRING,
-    left: DataTypes.STRING,
+    left_pos: DataTypes.STRING,
     image: DataTypes.STRING,
   },
   {

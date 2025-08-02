@@ -15,7 +15,7 @@ export default {
       top: {
         type: Sequelize.STRING,
       },
-      left: {
+      left_pos: {
         type: Sequelize.STRING,
       },
       image: {
