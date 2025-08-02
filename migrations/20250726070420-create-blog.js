@@ -7,24 +7,27 @@ export default {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER,
+        type: DataTypes.INTEGER,
       },
       title: {
-        type: Sequelize.STRING,
+        type: DataTypes.STRING,
       },
       subtitles: {
-        type: Sequelize.JSON,
+        type: DataTypes.STRING,
       },
       images: {
-        type: Sequelize.ARRAY(Sequelize.STRING),
+        type: DataTypes.ARRAY(DataTypes.STRING),
+      },
+      description: {
+        type: DataTypes.STRING,
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE,
+        type: DataTypes.DATE,
       },
     });
   },
