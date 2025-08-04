@@ -101,7 +101,7 @@ const CatalogUpload = ({ record, onChange }) => {
       safeOnChange("description", description);
 
       alert("Каталог успешно сохранен!");
-      window.location.href = "http://localhost:7007/admin/resources/catalog";
+      window.location.href = "/admin/resources/catalog";
     } catch (err) {
       console.error(err);
       alert("Ошибка: " + err.message);

@@ -49,6 +49,7 @@ const MultiFileUpload = () => {
 
       setUploaded(res.data.data.images || []);
       alert("Все данные успешно сохранены!");
+      window.location.href = "/admin/resources/blog";
     } catch (err) {
       console.error(err);
       alert("Ошибка: " + err.message);
