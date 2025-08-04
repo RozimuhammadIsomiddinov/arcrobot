@@ -69,8 +69,9 @@ app.use("/consult", consultRoute);
 app.use("/blog", blogRoute);
 app.use("/catalog", catalogRoute);
 app.use("/sites", sitesRoute);
-app.use("/admin", adminRouter);
-
+app.get("/hello", (req, res) => {
+  return res.json("salom");
+});
 app.post("/upload-multi", upload.array("files", 10), async (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {

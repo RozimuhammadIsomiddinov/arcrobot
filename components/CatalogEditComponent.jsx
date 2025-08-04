@@ -3,7 +3,7 @@ import { Box, Label, Button, Input, TextArea } from "@adminjs/design-system";
 import axios from "axios";
 import ReactJson from "react-json-view";
 
-// JSONdagi qiymatlarni stringga aylantirish uchun helper
+// Преобразует значения JSON в строки
 const convertValuesToString = (obj) => {
   if (typeof obj !== "object" || obj === null) return obj;
   const copy = Array.isArray(obj) ? [...obj] : { ...obj };
@@ -33,7 +33,7 @@ const CatalogEditComponent = ({ record, onChange }) => {
     }
   });
 
-  // Eski rasmlar
+  // Старые изображения
   const [uploaded, setUploaded] = useState(() => {
     try {
       const imgs = record?.params?.images;
@@ -60,7 +60,7 @@ const CatalogEditComponent = ({ record, onChange }) => {
 
   const addInput = () => {
     if (inputs.length >= 10)
-      return alert("Ko'pi bilan 10 ta rasm yuklashingiz mumkin!");
+      return alert("Вы можете загрузить не более 10 изображений!");
     setInputs([...inputs, { id: Date.now(), file: null }]);
   };
 
@@ -83,7 +83,7 @@ const CatalogEditComponent = ({ record, onChange }) => {
       formData.append("property", JSON.stringify(property));
       formData.append("description", description);
 
-      // Eski rasmlarni massiv ko‘rinishda yuboramiz
+      // Отправляем старые изображения в виде массива
       formData.append(
         "oldImages",
         JSON.stringify(Array.isArray(uploaded) ? uploaded : [])
@@ -104,11 +104,11 @@ const CatalogEditComponent = ({ record, onChange }) => {
       safeOnChange("property", property);
       safeOnChange("description", description);
 
-      alert("Catalog muvaffaqiyatli yangilandi!");
+      alert("Каталог успешно обновлен!");
       window.location.href = "/admin/resources/catalog";
     } catch (err) {
       console.error(err);
-      alert("Xatolik: " + err.message);
+      alert("Ошибка: " + err.message);
     }
   };
 
@@ -116,7 +116,7 @@ const CatalogEditComponent = ({ record, onChange }) => {
     <Box flex flexDirection="column" alignItems="center" mt="xl" width="100%">
       {/* Name */}
       <Box mb="md" width="70%">
-        <Label>Name</Label>
+        <Label>Название</Label>
         <Input
           value={name}
           onChange={(e) => {
@@ -128,7 +128,7 @@ const CatalogEditComponent = ({ record, onChange }) => {
 
       {/* Title */}
       <Box mb="md" width="70%">
-        <Label>Title</Label>
+        <Label>Заголовок</Label>
         <Input
           value={title}
           onChange={(e) => {
@@ -148,7 +148,7 @@ const CatalogEditComponent = ({ record, onChange }) => {
           borderRadius: "8px",
         }}
       >
-        <Label style={{ color: "white" }}>Property (JSON)</Label>
+        <Label style={{ color: "white" }}>Свойства (JSON)</Label>
         <ReactJson
           src={property}
           name={false}
@@ -175,7 +175,7 @@ const CatalogEditComponent = ({ record, onChange }) => {
 
       {/* Description */}
       <Box mb="md" width="70%">
-        <Label>Description</Label>
+        <Label>Описание</Label>
         <TextArea
           rows={6}
           value={description}
@@ -189,7 +189,7 @@ const CatalogEditComponent = ({ record, onChange }) => {
       {/* Old Images */}
       {uploaded.length > 0 && (
         <Box mb="lg" width="70%">
-          <Label>Oldingi rasmlar</Label>
+          <Label>Старые изображения</Label>
           <Box style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
             {uploaded.map((img, idx) => (
               <Box key={idx} style={{ position: "relative" }}>
@@ -217,7 +217,7 @@ const CatalogEditComponent = ({ record, onChange }) => {
       )}
 
       {/* New Images */}
-      <Label>Yangi rasmlar qo'shish</Label>
+      <Label>Добавить новые изображения</Label>
       {inputs.map((input, index) => (
         <Box key={input.id} mb="md" style={{ display: "flex", gap: "15px" }}>
           <label
@@ -229,7 +229,7 @@ const CatalogEditComponent = ({ record, onChange }) => {
               cursor: "pointer",
             }}
           >
-            📂 Fayl tanlash
+            📂 Выбрать файл
             <input
               type="file"
               accept="image/*"
@@ -247,12 +247,18 @@ const CatalogEditComponent = ({ record, onChange }) => {
         </Box>
       ))}
 
-      <Button type="button" mt="lg" onClick={addInput} variant="secondary">
-        ➕ Yangi rasm qo'shish
+      <Button
+        type="button"
+        mt="lg"
+        onClick={addInput}
+        variant="secondary"
+        style={{ color: "white" }}
+      >
+        ➕ Добавить изображение
       </Button>
 
       <Button type="button" mt="lg" variant="primary" onClick={handleUpdate}>
-        💾 Yangilash
+        💾 Обновить
       </Button>
     </Box>
   );

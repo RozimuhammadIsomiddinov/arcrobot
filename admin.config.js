@@ -1,5 +1,4 @@
 import path from "path";
-
 import AdminJS from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import { dark, light, noSidebar } from "@adminjs/themes";
@@ -16,6 +15,10 @@ AdminJS.registerAdapter({ Database, Resource });
 const componentLoader = new ComponentLoader();
 
 const Components = {
+  customDashboard: componentLoader.add(
+    "customDashboard",
+    path.resolve("components/CustomDashboard.jsx")
+  ),
   multiUpload: componentLoader.add(
     "MultiFileUpload",
     path.resolve("components/MultiFileUpload.jsx")
@@ -44,7 +47,6 @@ const Components = {
 
 const adminJs = new AdminJS({
   componentLoader,
-
   defaultTheme: dark.id,
   availableThemes: [dark, light, noSidebar],
   resources: [
@@ -55,14 +57,9 @@ const adminJs = new AdminJS({
           images: { components: { show: Components.showImagesCatalog } },
           property: { components: { show: Components.propertyTable } },
         },
-
         actions: {
-          new: {
-            component: Components.multiCatalog,
-          },
-          edit: {
-            component: Components.editCatalog,
-          },
+          new: { component: Components.multiCatalog },
+          edit: { component: Components.editCatalog },
         },
       },
     },
@@ -72,42 +69,24 @@ const adminJs = new AdminJS({
       resource: Blog,
       options: {
         properties: {
-          images: {
-            components: {
-              show: Components.showImages,
-            },
-          },
+          images: { components: { show: Components.showImages } },
         },
         actions: {
-          new: {
-            component: Components.multiUpload,
-          },
-          edit: {
-            component: Components.multiUpload,
-          },
+          new: { component: Components.multiUpload },
+          edit: { component: Components.multiUpload },
         },
       },
     },
   ],
   rootPath: "/admin",
-  branding: {
-    companyName: "Arcbot Admin",
-  },
-  locale: {
-    translations: {
-      en: {
-        resources: {
-          Image: {
-            properties: {
-              file: "File", // **BU YO'QOLGAN TARJIMANI O'RNIGA QO'YADI**
-            },
-          },
-        },
-      },
-    },
-  },
+  dashboard: { component: Components.customDashboard },
+  branding: { companyName: "Arcbot Admin" },
 });
 
+const user = {
+  email: "arcrobot", // TEST_EMAIL o‘rniga oddiy email
+  // password: bcrypt.hashSync("12345678", 10), // TEST_PASSWORD o‘rniga oddiy password
+};
 adminJs.watch();
 const adminRouter = AdminJSExpress.buildRouter(adminJs);
 

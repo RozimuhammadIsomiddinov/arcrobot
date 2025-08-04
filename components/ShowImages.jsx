@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { Box, Label, Text } from "@adminjs/design-system";
+import { Box, Label } from "@adminjs/design-system";
 
 const ShowComponent = ({ record, property }) => {
   const params = record?.params || {};
   console.log("RECORD PARAMS =>", params);
 
-  // image.0, image.1, ... ni yig‘ib massivga aylantiramiz
+  // Собираем image.0, image.1, ... в массив
   const imageList = Object.keys(params)
     .filter((key) => key.startsWith(`${property.name}.`))
     .map((key) => params[key]);
@@ -13,7 +13,7 @@ const ShowComponent = ({ record, property }) => {
   if (!imageList || imageList.length === 0) {
     return (
       <Box mt="lg" textAlign="center">
-        <Label>🚫 Rasm mavjud emas</Label>
+        <Label>🚫 Изображения отсутствуют</Label>
       </Box>
     );
   }
@@ -44,7 +44,7 @@ const ShowComponent = ({ record, property }) => {
           >
             <img
               src={file}
-              alt={`image-${index}`}
+              alt={`изображение-${index}`}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </Box>
@@ -70,7 +70,7 @@ const ShowComponent = ({ record, property }) => {
         >
           <img
             src={selected}
-            alt="big-preview"
+            alt="увеличенный просмотр"
             style={{
               maxWidth: "90%",
               maxHeight: "90%",

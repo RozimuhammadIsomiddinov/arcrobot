@@ -1,4 +1,6 @@
 AdminJS.UserComponents = {}
+import customDashboard from '../components/CustomDashboard'
+AdminJS.UserComponents.customDashboard = customDashboard
 import MultiFileUpload from '../components/MultiFileUpload'
 AdminJS.UserComponents.MultiFileUpload = MultiFileUpload
 import ShowFile from '../components/ShowImages'

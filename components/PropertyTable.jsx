@@ -8,16 +8,16 @@ const PropertyTable = ({ record }) => {
 
   try {
     if (params.property) {
-      // 1) Agar property string JSON bo‘lsa
+      // 1) Если property строка JSON
       if (typeof params.property === "string") {
         propertyObj = JSON.parse(params.property);
       }
-      // 2) Agar property ob'ekt bo‘lsa
+      // 2) Если property объект
       else if (typeof params.property === "object") {
         propertyObj = params.property;
       }
     } else {
-      // 3) property.* ko‘rinishdagi keylarni yig‘amiz
+      // 3) Собираем ключи вида property.*
       propertyObj = Object.keys(params)
         .filter((key) => key.startsWith("property."))
         .reduce((acc, key) => {
@@ -27,7 +27,7 @@ const PropertyTable = ({ record }) => {
         }, {});
     }
   } catch (err) {
-    console.error("Property parse error:", err);
+    console.error("Ошибка парсинга property:", err);
     propertyObj = {};
   }
 
@@ -53,12 +53,12 @@ const PropertyTable = ({ record }) => {
           display: "block",
         }}
       >
-        📋 Property
+        📋 Свойства
       </Label>
 
       {keys.length === 0 ? (
         <Box mt="md" style={{ color: "#d32f2f", fontSize: "16px" }}>
-          🚫 Property mavjud emas
+          🚫 Свойства отсутствуют
         </Box>
       ) : (
         <table
@@ -81,7 +81,7 @@ const PropertyTable = ({ record }) => {
                   fontSize: "16px",
                 }}
               >
-                Key
+                Ключ
               </th>
               <th
                 style={{
@@ -91,7 +91,7 @@ const PropertyTable = ({ record }) => {
                   fontSize: "16px",
                 }}
               >
-                Value
+                Значение
               </th>
             </tr>
           </thead>
@@ -117,7 +117,7 @@ const PropertyTable = ({ record }) => {
                   style={{
                     padding: "12px",
                     color: "#37474f",
-                    whiteSpace: "pre-wrap", // \n ni ham ko‘rsatadi
+                    whiteSpace: "pre-wrap", // чтобы показывать \n
                   }}
                 >
                   {propertyObj[key]}

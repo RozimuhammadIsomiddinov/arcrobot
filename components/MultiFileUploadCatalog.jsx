@@ -3,7 +3,7 @@ import { Box, Label, Button, Input, TextArea } from "@adminjs/design-system";
 import axios from "axios";
 import ReactJson from "react-json-view";
 
-// yordamchi funksiya: null yoki noto‘g‘ri qiymatlarni stringga o‘tkazib qo‘yadi
+// вспомогательная функция: null или неверные значения переводит в строки
 const convertValuesToString = (obj) => {
   if (typeof obj !== "object" || obj === null) return obj;
   const copy = Array.isArray(obj) ? [...obj] : { ...obj };
@@ -27,17 +27,17 @@ const CatalogUpload = ({ record, onChange }) => {
     record?.params?.description || ""
   );
 
-  // Property (safe JSON parse)
+  // Property (безопасный JSON parse)
   const [property, setProperty] = useState(() => {
     try {
       return record?.params?.property ? JSON.parse(record.params.property) : {};
     } catch (err) {
-      console.warn("Property JSON emas, fallback ishlatilmoqda:", err);
+      console.warn("Property не JSON, используется fallback:", err);
       return {};
     }
   });
 
-  // Images
+  // Изображения
   const [inputs, setInputs] = useState([{ id: Date.now(), file: null }]);
   const [uploaded, setUploaded] = useState(() => {
     try {
@@ -47,33 +47,33 @@ const CatalogUpload = ({ record, onChange }) => {
     }
   });
 
-  // xavfsiz onChange
+  // безопасный onChange
   const safeOnChange = (field, value) => {
     if (typeof onChange === "function") {
       onChange(field, value);
     }
   };
 
-  // Fayl tanlash
+  // Выбор файла
   const handleFileChange = (index, file) => {
     const newInputs = [...inputs];
     newInputs[index].file = file;
     setInputs(newInputs);
   };
 
-  // Input qo'shish
+  // Добавить поле
   const addInput = () => {
     if (inputs.length >= 10) {
-      return alert("Eng ko'pi 10 ta rasm yuklashingiz mumkin!");
+      return alert("Максимум можно загрузить 10 изображений!");
     }
     setInputs([...inputs, { id: Date.now(), file: null }]);
   };
 
-  // Saqlash
+  // Сохранить
   const handleUpload = async () => {
     const files = inputs.map((i) => i.file).filter(Boolean);
     if (!files.length) {
-      return alert("Kamida 1 ta rasm tanlang!");
+      return alert("Выберите хотя бы одно изображение!");
     }
 
     try {
@@ -100,11 +100,11 @@ const CatalogUpload = ({ record, onChange }) => {
       safeOnChange("property", JSON.stringify(property));
       safeOnChange("description", description);
 
-      alert("Catalog muvaffaqiyatli saqlandi!");
+      alert("Каталог успешно сохранен!");
       window.location.href = "http://localhost:7007/admin/resources/catalog";
     } catch (err) {
       console.error(err);
-      alert("Xatolik: " + err.message);
+      alert("Ошибка: " + err.message);
     }
   };
 
@@ -112,33 +112,33 @@ const CatalogUpload = ({ record, onChange }) => {
     <Box flex flexDirection="column" alignItems="center" mt="xl" width="100%">
       {/* Name */}
       <Box mb="md" width="70%">
-        <Label>Name</Label>
+        <Label>Название</Label>
         <Input
           value={name}
           onChange={(e) => {
             setName(e.target.value);
             safeOnChange("name", e.target.value);
           }}
-          placeholder="Nomi kiriting"
+          placeholder="Введите название"
         />
       </Box>
 
       {/* Title */}
       <Box mb="md" width="70%">
-        <Label>Title</Label>
+        <Label>Заголовок</Label>
         <Input
           value={title}
           onChange={(e) => {
             setTitle(e.target.value);
             safeOnChange("title", e.target.value);
           }}
-          placeholder="Title kiriting"
+          placeholder="Введите заголовок"
         />
       </Box>
 
       {/* Property */}
       <Box mb="md" width="70%">
-        <Label>Property (JSON)</Label>
+        <Label>Свойства (JSON)</Label>
         <Box
           style={{
             border: "1px solid #ccc",
@@ -177,7 +177,7 @@ const CatalogUpload = ({ record, onChange }) => {
           />
         </Box>
 
-        {/* Hidden input */}
+        {/* Скрытое поле */}
         <input
           type="hidden"
           value={JSON.stringify(property)}
@@ -188,7 +188,7 @@ const CatalogUpload = ({ record, onChange }) => {
 
       {/* Description */}
       <Box mb="md" width="70%">
-        <Label>Description</Label>
+        <Label>Описание</Label>
         <TextArea
           rows={6}
           value={description}
@@ -196,13 +196,13 @@ const CatalogUpload = ({ record, onChange }) => {
             setDescription(e.target.value);
             safeOnChange("description", e.target.value);
           }}
-          placeholder="Description kiriting"
+          placeholder="Введите описание"
         />
       </Box>
 
-      {/* Rasmlar */}
+      {/* Изображения */}
       <Label mb="lg" style={{ fontSize: "20px", fontWeight: "bold" }}>
-        Rasmlar (eng ko'pi 10 ta)
+        Изображения (максимум 10)
       </Label>
 
       {inputs.map((input, index) => (
@@ -229,7 +229,7 @@ const CatalogUpload = ({ record, onChange }) => {
               cursor: "pointer",
             }}
           >
-            📂 Fayl tanlash
+            📂 Выбрать файл
             <input
               type="file"
               accept="image/*"
@@ -241,7 +241,7 @@ const CatalogUpload = ({ record, onChange }) => {
           {input.file && (
             <>
               <span style={{ fontSize: "14px", fontWeight: "500" }}>
-                {input.file.name} tanlandi
+                Файл {input.file.name} выбран
               </span>
               <img
                 src={URL.createObjectURL(input.file)}
@@ -263,9 +263,9 @@ const CatalogUpload = ({ record, onChange }) => {
         type="button"
         mt="lg"
         onClick={addInput}
-        style={{ backgroundColor: "rgba(20, 185, 211, 0.8)" }}
+        style={{ backgroundColor: "rgba(20, 185, 211, 0.8)", color: "white" }}
       >
-        ➕ Rasm qo'shish
+        ➕ Добавить изображение
       </Button>
 
       <Button
@@ -277,7 +277,7 @@ const CatalogUpload = ({ record, onChange }) => {
           handleUpload();
         }}
       >
-        🚀 Saqlash
+        🚀 Сохранить
       </Button>
 
       {Array.isArray(uploaded) && uploaded.length > 0 && (

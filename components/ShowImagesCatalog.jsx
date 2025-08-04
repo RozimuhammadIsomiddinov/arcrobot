@@ -10,16 +10,16 @@ const CatalogShow = ({ record }) => {
   if (params.images) {
     try {
       if (Array.isArray(params.images)) {
-        // allaqachon massiv
+        // уже массив
         imageList = params.images;
       } else if (typeof params.images === "string") {
         let cleaned = params.images.trim();
 
-        // 1) Oddiy JSON massiv bo'lsa
+        // 1) Обычный JSON массив
         if (cleaned.startsWith("[") && cleaned.endsWith("]")) {
           imageList = JSON.parse(cleaned);
         }
-        // 2) Ob'ekt formatida bo'lsa { "0":"url", "1":"url2" }
+        // 2) В формате объекта { "0":"url", "1":"url2" }
         else if (cleaned.startsWith("{") && cleaned.endsWith("}")) {
           try {
             const parsed = JSON.parse(cleaned);
@@ -29,7 +29,7 @@ const CatalogShow = ({ record }) => {
               imageList = Object.values(parsed);
             }
           } catch {
-            // Agar parse bo'lmasa, {} ni olib tashlab vergul bo'yicha bo'lamiz
+            // если не парсится, убираем {} и делим по запятой
             cleaned = cleaned.replace(/[{}"]/g, "");
             imageList = cleaned
               .split(",")
@@ -37,7 +37,7 @@ const CatalogShow = ({ record }) => {
               .filter(Boolean);
           }
         }
-        // 3) Faqat bitta URL bo'lsa
+        // 3) Если только один URL
         else {
           cleaned = cleaned.replace(/["{}]/g, "");
           imageList = cleaned
@@ -47,7 +47,7 @@ const CatalogShow = ({ record }) => {
         }
       }
     } catch (err) {
-      console.error("Images parse error:", err);
+      console.error("Ошибка парсинга изображений:", err);
       imageList = [];
     }
   }
@@ -57,7 +57,7 @@ const CatalogShow = ({ record }) => {
   if (!imageList || imageList.length === 0) {
     return (
       <Box mt="lg" textAlign="center">
-        <Label>🚫 Rasm mavjud emas</Label>
+        <Label>🚫 Изображения отсутствуют</Label>
       </Box>
     );
   }
@@ -86,7 +86,7 @@ const CatalogShow = ({ record }) => {
           >
             <img
               src={file}
-              alt={`image-${index}`}
+              alt={`изображение-${index}`}
               style={{ width: "100%", height: "100%", objectFit: "cover" }}
             />
           </Box>
@@ -112,7 +112,7 @@ const CatalogShow = ({ record }) => {
         >
           <img
             src={selected}
-            alt="big-preview"
+            alt="увеличенный просмотр"
             style={{
               maxWidth: "90%",
               maxHeight: "90%",
