@@ -4,15 +4,19 @@ import AdminJSExpress from "@adminjs/express";
 import { dark, light, noSidebar } from "@adminjs/themes";
 import { ComponentLoader } from "adminjs";
 import { Database, Resource } from "@adminjs/sequelize";
-
+import bcrypt from "bcrypt";
 import Order from "./models/order.js";
 import Sites from "./models/sites.js";
 import Blog from "./models/blog.js";
 import Catalog from "./models/catalog.js";
+import dotenv from "dotenv";
 
+dotenv.config();
 AdminJS.registerAdapter({ Database, Resource });
 
 const componentLoader = new ComponentLoader();
+
+const { EMAIL, PASSWORD } = process.env;
 
 const Components = {
   customDashboard: componentLoader.add(
@@ -81,13 +85,37 @@ const adminJs = new AdminJS({
   rootPath: "/admin",
   dashboard: { component: Components.customDashboard },
   branding: { companyName: "Arcbot Admin" },
+  softwareBrothers: false,
+  withMadeWithLove: false,
 });
 
-const user = {
-  email: "arcrobot", // TEST_EMAIL o‘rniga oddiy email
-  // password: bcrypt.hashSync("12345678", 10), // TEST_PASSWORD o‘rniga oddiy password
+const ADMIN = {
+  email: EMAIL,
+  password: await bcrypt.hash(PASSWORD, 10),
 };
+
 adminJs.watch();
-const adminRouter = AdminJSExpress.buildRouter(adminJs);
+
+const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
+  adminJs,
+  {
+    authenticate: async (email, password) => {
+      if (
+        email === ADMIN.email &&
+        (await bcrypt.compare(password, ADMIN.password))
+      ) {
+        return ADMIN;
+      }
+
+      return false;
+    },
+    cookiePassword: "some-secret-password",
+  },
+  null,
+  {
+    resave: false,
+    saveUninitialized: true,
+  }
+);
 
 export { adminJs, adminRouter };

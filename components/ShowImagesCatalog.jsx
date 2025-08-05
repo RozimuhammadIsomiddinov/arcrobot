@@ -3,53 +3,53 @@ import { Box, Label } from "@adminjs/design-system";
 
 const CatalogShow = ({ record }) => {
   const params = record?.params || {};
-  console.log("CATALOG RECORD =>", params);
+  console.log("CATALOG RECORD images =>", params.images);
 
   let imageList = [];
 
-  if (params.images) {
-    try {
-      if (Array.isArray(params.images)) {
-        // уже массив
-        imageList = params.images;
-      } else if (typeof params.images === "string") {
-        let cleaned = params.images.trim();
+  try {
+    const images = params.images;
 
-        // 1) Обычный JSON массив
-        if (cleaned.startsWith("[") && cleaned.endsWith("]")) {
-          imageList = JSON.parse(cleaned);
-        }
-        // 2) В формате объекта { "0":"url", "1":"url2" }
-        else if (cleaned.startsWith("{") && cleaned.endsWith("}")) {
-          try {
-            const parsed = JSON.parse(cleaned);
-            if (Array.isArray(parsed)) {
-              imageList = parsed;
-            } else if (typeof parsed === "object") {
-              imageList = Object.values(parsed);
-            }
-          } catch {
-            // если не парсится, убираем {} и делим по запятой
-            cleaned = cleaned.replace(/[{}"]/g, "");
-            imageList = cleaned
-              .split(",")
-              .map((s) => s.trim())
-              .filter(Boolean);
-          }
-        }
-        // 3) Если только один URL
-        else {
-          cleaned = cleaned.replace(/["{}]/g, "");
-          imageList = cleaned
-            .split(",")
-            .map((s) => s.trim())
-            .filter(Boolean);
-        }
-      }
-    } catch (err) {
-      console.error("Ошибка парсинга изображений:", err);
+    if (!images || images === "{}") {
       imageList = [];
     }
+    // 1) Agar allaqachon massiv bo‘lsa
+    else if (Array.isArray(images)) {
+      imageList = images;
+    }
+    // 2) Agar object bo‘lsa
+    else if (typeof images === "object") {
+      imageList = Object.values(images);
+    }
+    // 3) Agar string bo‘lsa
+    else if (typeof images === "string") {
+      let cleaned = images.trim();
+
+      // postgres array: {"url1","url2"}
+      if (cleaned.startsWith("{") && cleaned.endsWith("}")) {
+        cleaned = cleaned.slice(1, -1); // qavslarni olib tashlaymiz
+        imageList = cleaned
+          .split(",")
+          .map((s) => s.replace(/"/g, "").trim())
+          .filter(Boolean);
+      }
+      // oddiy JSON array ["url1","url2"]
+      else if (cleaned.startsWith("[") && cleaned.endsWith("]")) {
+        imageList = JSON.parse(cleaned);
+      }
+      // oddiy JSON object {"0":"url1"}
+      else if (cleaned.startsWith("{") && cleaned.includes(":")) {
+        const parsed = JSON.parse(cleaned);
+        imageList = Object.values(parsed);
+      }
+      // faqat bitta URL
+      else {
+        imageList = [cleaned.replace(/"/g, "")];
+      }
+    }
+  } catch (err) {
+    console.error("Ошибка обработки images:", err);
+    imageList = [];
   }
 
   const [selected, setSelected] = useState(null);

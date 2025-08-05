@@ -3,7 +3,6 @@ import { Box, Label, Button, Input, TextArea } from "@adminjs/design-system";
 import axios from "axios";
 import ReactJson from "react-json-view";
 
-// Преобразует значения JSON в строки
 const convertValuesToString = (obj) => {
   if (typeof obj !== "object" || obj === null) return obj;
   const copy = Array.isArray(obj) ? [...obj] : { ...obj };

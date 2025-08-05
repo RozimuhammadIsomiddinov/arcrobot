@@ -7,6 +7,7 @@ import blogRoute from "./routes/blog.route.js";
 import catalogRoute from "./routes/catalog.route.js";
 import sitesRoute from "./routes/site.route.js";
 import { adminJs, adminRouter } from "./admin.config.js";
+import bodyParser from "body-parser";
 
 import swaggerUi from "swagger-ui-express";
 import swaggerJsDoc from "swagger-jsdoc";
@@ -32,9 +33,11 @@ if (!fs.existsSync(imagesFolderPath)) {
 }
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+
 app.use(adminJs.options.rootPath, adminRouter);
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 app.use(
   cors({
@@ -116,7 +119,6 @@ app.post(
 
       let { name, title, description, property, images } = req.body;
 
-      // ⚡ JSON.parse ni xavfsiz qilish
       try {
         property = property ? JSON.parse(property) : {};
       } catch {
@@ -129,7 +131,6 @@ app.post(
         images = [];
       }
 
-      // Fayllarni ham qo‘shamiz
       const finalImages = [...images, ...imagePaths];
 
       const catalog = await Catalog.create({
@@ -147,7 +148,6 @@ app.post(
     }
   }
 );
-
 app.put(
   "/upload-multi-catalog-edit",
   upload.array("files", 10),
@@ -187,6 +187,7 @@ app.put(
     }
   }
 );
+
 app.listen(process.env.PORT, () => {
   console.log("listened");
 });
