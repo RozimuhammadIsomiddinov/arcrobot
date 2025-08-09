@@ -31,4 +31,12 @@ const selectBlogID = async (id) => {
   return await Blog.findByPk(id);
 };
 
-export { selectBlog, selectBlogID };
+const updateBlog = async (id, updateData) => {
+  const blog = await Blog.findByPk(id);
+  if (!blog) return null;
+
+  await blog.update(updateData);
+
+  return blog;
+};
+export { selectBlog, selectBlogID, updateBlog };

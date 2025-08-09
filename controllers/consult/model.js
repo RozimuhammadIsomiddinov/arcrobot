@@ -1,7 +1,12 @@
 import Order from "../../models/order.js";
 
-const selectAll = async () => {
-  return await Order.findAll();
+const selectAll = async (page, pageSize) => {
+  const offset = (page - 1) * pageSize;
+  return await Order.findAndCountAll({
+    limit: pageSize,
+    offset,
+    order: [["createdAt", "DESC"]],
+  });
 };
 
 const selectByID = async (id) => {

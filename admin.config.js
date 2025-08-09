@@ -1,5 +1,5 @@
 import path from "path";
-import AdminJS from "adminjs";
+import AdminJS, { actions } from "adminjs";
 import AdminJSExpress from "@adminjs/express";
 import { dark, light, noSidebar } from "@adminjs/themes";
 import { ComponentLoader } from "adminjs";
@@ -23,9 +23,9 @@ const Components = {
     "customDashboard",
     path.resolve("components/CustomDashboard.jsx")
   ),
-  multiUpload: componentLoader.add(
+  blogCreate: componentLoader.add(
     "MultiFileUpload",
-    path.resolve("components/MultiFileUpload.jsx")
+    path.resolve("components/create/blog.jsx")
   ),
   showImages: componentLoader.add(
     "ShowFile",
@@ -47,6 +47,34 @@ const Components = {
     "editCatalog",
     path.resolve("components/CatalogEditComponent.jsx")
   ),
+  orderList: componentLoader.add(
+    "orderList",
+    path.resolve("components/show/order.jsx")
+  ),
+  siteList: componentLoader.add(
+    "siteList",
+    path.resolve("components/show/site.jsx")
+  ),
+  sitesEdit: componentLoader.add(
+    "siteEdit",
+    path.resolve("components/edit/sites.jsx")
+  ),
+  orderByID: componentLoader.add(
+    "sitesByID",
+    path.resolve("components/show/orde.id.jsx")
+  ),
+  blogList: componentLoader.add(
+    "blogList",
+    path.resolve("components/show/blog.jsx")
+  ),
+  blogEdit: componentLoader.add(
+    "blogEdit",
+    path.resolve("components/edit/blog.jsx")
+  ),
+  catalogList: componentLoader.add(
+    "catalogList",
+    path.resolve("components/show/catalog.jsx")
+  ),
 };
 
 const adminJs = new AdminJS({
@@ -62,13 +90,33 @@ const adminJs = new AdminJS({
           property: { components: { show: Components.propertyTable } },
         },
         actions: {
+          //        list: { component: Components.catalogList },
           new: { component: Components.multiCatalog },
           edit: { component: Components.editCatalog },
         },
       },
     },
-    { resource: Order },
-    { resource: Sites },
+    {
+      resource: Order,
+      options: {
+        actions: {
+          list: { component: Components.orderList },
+          new: { isVisible: false },
+          edit: { isVisible: false },
+          show: { component: Components.orderByID },
+        },
+      },
+    },
+    {
+      resource: Sites,
+      options: {
+        actions: {
+          list: { component: Components.siteList },
+          edit: { component: Components.sitesEdit },
+          show: { isVisible: false },
+        },
+      },
+    },
     {
       resource: Blog,
       options: {
@@ -76,8 +124,10 @@ const adminJs = new AdminJS({
           images: { components: { show: Components.showImages } },
         },
         actions: {
-          new: { component: Components.multiUpload },
-          edit: { component: Components.multiUpload },
+          list: { component: Components.blogList },
+          new: { component: Components.blogCreate },
+          edit: { component: Components.blogEdit },
+          show: { isVisible: false },
         },
       },
     },

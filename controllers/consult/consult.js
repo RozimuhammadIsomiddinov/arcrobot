@@ -2,8 +2,17 @@ import { createConsult, selectAll, selectByID } from "./model.js";
 
 const selectALlCont = async (req, res) => {
   try {
-    const result = await selectAll();
-    return res.status(200).json(result);
+    const page = Number(req.query.page) || 1;
+    const pageSize = Number(req.query.pageSize) || 5;
+
+    const { rows, count } = await selectAll(page, pageSize);
+
+    return res.status(200).json({
+      data: rows,
+      total: count,
+      page,
+      pageSize,
+    });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -30,4 +39,5 @@ const createConsultCont = async (req, res) => {
     res.status(500).json({ error: e.message });
   }
 };
+
 export { selectALlCont, selectByIDCont, createConsultCont };

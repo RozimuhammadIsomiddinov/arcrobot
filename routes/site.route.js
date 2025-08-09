@@ -1,5 +1,9 @@
 import express from "express";
-import { getAllSitesCont, getSiteByIDCont } from "../controllers/site/site.js";
+import {
+  getAllSitesCont,
+  getSiteByIDCont,
+  updateSiteCont,
+} from "../controllers/site/site.js";
 
 const router = express.Router();
 
@@ -113,5 +117,6 @@ const router = express.Router();
 
 router.get("/", getAllSitesCont);
 router.get("/:id", getSiteByIDCont);
+router.put("/update/:id", updateSiteCont);
 
 export default router;

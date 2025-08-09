@@ -30,5 +30,16 @@ const getAllSites = async (page = 1, pageSize = 10) => {
 const getSiteByID = async (id) => {
   return await Sites.findByPk(id);
 };
+const updateSite = async (id, data) => {
+  const site = await Sites.findByPk(id);
+  if (!site) return null;
 
-export { getAllSites, getSiteByID };
+  await site.update({
+    name: data.name || site.name,
+    link: data.link || site.link,
+  });
+
+  return site;
+};
+
+export { getAllSites, getSiteByID, updateSite };

@@ -25,30 +25,30 @@ const CatalogShow = ({ record }) => {
     else if (typeof images === "string") {
       let cleaned = images.trim();
 
-      // postgres array: {"url1","url2"}
+      // PostgreSQL array: {url1,url2} yoki {"url1","url2"}
       if (cleaned.startsWith("{") && cleaned.endsWith("}")) {
         cleaned = cleaned.slice(1, -1); // qavslarni olib tashlaymiz
         imageList = cleaned
           .split(",")
-          .map((s) => s.replace(/"/g, "").trim())
+          .map((s) => s.replace(/(^"|"$)/g, "").trim()) // qo'shtirnoqlarni olib tashlash
           .filter(Boolean);
       }
-      // oddiy JSON array ["url1","url2"]
+      // JSON array: ["url1", "url2"]
       else if (cleaned.startsWith("[") && cleaned.endsWith("]")) {
         imageList = JSON.parse(cleaned);
       }
-      // oddiy JSON object {"0":"url1"}
+      // JSON object: {"0": "url1", ...}
       else if (cleaned.startsWith("{") && cleaned.includes(":")) {
         const parsed = JSON.parse(cleaned);
         imageList = Object.values(parsed);
       }
-      // faqat bitta URL
+      // Faqat bitta URL bo‘lsa
       else {
         imageList = [cleaned.replace(/"/g, "")];
       }
     }
   } catch (err) {
-    console.error("Ошибка обработки images:", err);
+    console.error("❌ Ошибка обработки images:", err);
     imageList = [];
   }
 
@@ -93,6 +93,7 @@ const CatalogShow = ({ record }) => {
         ))}
       </Box>
 
+      {/* Modal preview */}
       {selected && (
         <Box
           onClick={() => setSelected(null)}
