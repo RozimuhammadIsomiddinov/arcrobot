@@ -14,7 +14,7 @@ const Catalog = sequelize.define(
     title: DataTypes.STRING,
     images: DataTypes.ARRAY(DataTypes.STRING),
     property: DataTypes.JSON,
-    description: DataTypes.STRING,
+    description: DataTypes.TEXT,
   },
   {
     sequelize,
