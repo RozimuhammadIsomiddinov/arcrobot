@@ -128,7 +128,13 @@ const BlogList = () => {
 
       {modalOpen && selectedBlog && (
         <Modal open={modalOpen} onClose={() => setModalOpen(false)} width={700}>
-          <Box padding="xl">
+          <Box
+            padding="xl"
+            style={{
+              maxHeight: "70vh",
+              overflowY: "auto",
+            }}
+          >
             <h1 style={{ marginBottom: 20 }}>
               📄 Детали блога #{selectedBlog.id}
             </h1>
