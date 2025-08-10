@@ -13,7 +13,7 @@ const Blog = sequelize.define(
     title: DataTypes.STRING,
     subtitles: DataTypes.STRING,
     images: DataTypes.ARRAY(DataTypes.STRING),
-    description: DataTypes.STRING,
+    description: DataTypes.TEXT,
   },
   {
     sequelize,
