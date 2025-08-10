@@ -3,6 +3,8 @@ import {
   getAllCatalogCont,
   getCatalogByIDCont,
 } from "../controllers/catalog/catalog.js";
+import upload from "../middleware/multer.js";
+import Catalog from "../models/catalog.js";
 
 const router = express.Router();
 
@@ -127,5 +129,98 @@ const router = express.Router();
 
 router.get("/", getAllCatalogCont);
 router.get("/:id", getCatalogByIDCont);
+router.post("/create", upload.array("files", 10), async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: "Hech qanday fayl yuklanmadi" });
+    }
+
+    const imagePaths = req.files.map(
+      (file) => `${process.env.BACKEND_URL}/${file.filename}`
+    );
+
+    let { name, title, description, property, images } = req.body;
+
+    try {
+      property = property ? JSON.parse(property) : {};
+    } catch {
+      property = {};
+    }
+
+    try {
+      images = images ? JSON.parse(images) : [];
+    } catch {
+      images = [];
+    }
+
+    const finalImages = [...images, ...imagePaths];
+
+    const catalog = await Catalog.create({
+      name,
+      title,
+      description,
+      images: finalImages,
+      property,
+    });
+
+    res.json({ success: true, data: catalog });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Xatolik yuz berdi" });
+  }
+});
+router.put(
+  "/update/:id",
+  upload.fields([
+    { name: "updatedImages" }, // eski rasmni yangilash uchun
+    { name: "newImages" }, // yangi rasm qo‘shish uchun
+  ]),
+  async (req, res) => {
+    try {
+      // Eski rasm URLlarini frontdan olish
+      let imagesFromClient = req.body.images ? JSON.parse(req.body.images) : [];
+
+      // updatedImages — eski rasm o‘rniga yangi rasm
+      if (req.files?.updatedImages) {
+        req.files.updatedImages.forEach((file, idx) => {
+          const newUrl = `${process.env.BACKEND_URL}/${file.filename}`;
+          imagesFromClient.splice(idx, 1, newUrl); // shu indexdagi rasmni almashtirish
+        });
+      }
+
+      // newImages — yangi rasm qo‘shish
+      if (req.files?.newImages) {
+        const newImageUrls = req.files.newImages.map(
+          (file) => `${process.env.BACKEND_URL}/${file.filename}`
+        );
+        imagesFromClient.push(...newImageUrls);
+      }
+
+      // Ma’lumotni yangilash
+      const [_, updatedRows] = await Catalog.update(
+        {
+          name: req.body.name,
+          title: req.body.title,
+          description: req.body.description,
+          property: JSON.parse(req.body.property || "[]"),
+          images: imagesFromClient,
+        },
+        {
+          where: { id: req.params.id },
+          returning: true,
+        }
+      );
+
+      res.json({
+        success: true,
+        message: "Каталог успешно обновлен",
+        data: updatedRows[0],
+      });
+    } catch (error) {
+      console.error("Update error:", error);
+      res.status(500).json({ success: false, message: "Ошибка сервера" });
+    }
+  }
+);
 
 export default router;

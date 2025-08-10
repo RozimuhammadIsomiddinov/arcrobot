@@ -58,6 +58,9 @@ const swaggerOptions = {
       {
         url: "http://62.113.109.158:7007",
       },
+      {
+        url: "http://localhost:7007",
+      },
     ],
   },
   apis: ["./routes/*.js"],
@@ -75,89 +78,6 @@ app.use("/sites", sitesRoute);
 app.get("/hello", (req, res) => {
   return res.json("salom");
 });
-app.post(
-  "/upload-multi-catalog",
-  upload.array("files", 10),
-  async (req, res) => {
-    try {
-      if (!req.files || req.files.length === 0) {
-        return res.status(400).json({ error: "Hech qanday fayl yuklanmadi" });
-      }
-
-      const imagePaths = req.files.map(
-        (file) => `${process.env.BACKEND_URL}/${file.filename}`
-      );
-
-      let { name, title, description, property, images } = req.body;
-
-      try {
-        property = property ? JSON.parse(property) : {};
-      } catch {
-        property = {};
-      }
-
-      try {
-        images = images ? JSON.parse(images) : [];
-      } catch {
-        images = [];
-      }
-
-      const finalImages = [...images, ...imagePaths];
-
-      const catalog = await Catalog.create({
-        name,
-        title,
-        description,
-        images: finalImages,
-        property,
-      });
-
-      res.json({ success: true, data: catalog });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Xatolik yuz berdi" });
-    }
-  }
-);
-app.put(
-  "/upload-multi-catalog-edit",
-  upload.array("files", 10),
-  async (req, res) => {
-    try {
-      const { id, name, title, description, property, oldImages } = req.body;
-
-      let images = [];
-      try {
-        images = JSON.parse(oldImages || "[]");
-        if (!Array.isArray(images)) images = [];
-      } catch {
-        images = [];
-      }
-
-      // yangi rasmlar
-      if (req.files && req.files.length > 0) {
-        const newImages = req.files.map(
-          (file) => `${process.env.BACKEND_URL}/${file.filename}`
-        );
-        images = [...images, ...newImages];
-      }
-
-      // yangilash
-      const updated = await Catalog.update(
-        { name, title, description, property, images },
-        { where: { id }, returning: true }
-      );
-
-      return res.json({
-        success: true,
-        data: updated[1][0],
-      });
-    } catch (err) {
-      console.error("Xatolik:", err);
-      res.status(500).json({ success: false, message: err.message });
-    }
-  }
-);
 
 app.listen(process.env.PORT, () => {
   console.log("listened");

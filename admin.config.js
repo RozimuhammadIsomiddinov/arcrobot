@@ -31,10 +31,7 @@ const Components = {
     "ShowFile",
     path.resolve("components/ShowImages.jsx")
   ),
-  multiCatalog: componentLoader.add(
-    "MultiFileCatalog",
-    path.resolve("components/MultiFileUploadCatalog.jsx")
-  ),
+
   showImagesCatalog: componentLoader.add(
     "ShowFileCatalog",
     path.resolve("components/ShowImagesCatalog.jsx")
@@ -43,10 +40,7 @@ const Components = {
     "PropertyTable",
     path.resolve("components/PropertyTable.jsx")
   ),
-  editCatalog: componentLoader.add(
-    "editCatalog",
-    path.resolve("components/CatalogEditComponent.jsx")
-  ),
+
   orderList: componentLoader.add(
     "orderList",
     path.resolve("components/show/order.jsx")
@@ -71,9 +65,22 @@ const Components = {
     "blogEdit",
     path.resolve("components/edit/blog.jsx")
   ),
+  //catalog
   catalogList: componentLoader.add(
     "catalogList",
     path.resolve("components/show/catalog.jsx")
+  ),
+  catalogDetails: componentLoader.add(
+    "catalogDetails",
+    path.resolve("components/details/catalog.jsx")
+  ),
+  catalogCreate: componentLoader.add(
+    "MultiFileCatalog",
+    path.resolve("components/create/catalog.jsx")
+  ),
+  catalogEdit: componentLoader.add(
+    "editCatalog",
+    path.resolve("components/edit/catalog.jsx")
   ),
 };
 
@@ -90,9 +97,10 @@ const adminJs = new AdminJS({
           property: { components: { show: Components.propertyTable } },
         },
         actions: {
-          //        list: { component: Components.catalogList },
-          new: { component: Components.multiCatalog },
-          edit: { component: Components.editCatalog },
+          list: { component: Components.catalogList },
+          show: { component: Components.catalogDetails },
+          new: { component: Components.catalogCreate },
+          edit: { component: Components.catalogEdit },
         },
       },
     },
@@ -121,7 +129,7 @@ const adminJs = new AdminJS({
       resource: Blog,
       options: {
         properties: {
-          images: { components: { show: Components.showImages } },
+          //   images: { components: { show: Components.showImages } },
         },
         actions: {
           list: { component: Components.blogList },
