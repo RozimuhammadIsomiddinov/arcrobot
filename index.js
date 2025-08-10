@@ -6,6 +6,7 @@ import consultRoute from "./routes/consult.route.js";
 import blogRoute from "./routes/blog.route.js";
 import catalogRoute from "./routes/catalog.route.js";
 import sitesRoute from "./routes/site.route.js";
+import imagePositionRoute from "./routes/image_position.route.js";
 import { adminJs, adminRouter } from "./admin.config.js";
 import bodyParser from "body-parser";
 
@@ -14,9 +15,7 @@ import swaggerJsDoc from "swagger-jsdoc";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
-import upload from "./middleware/multer.js";
-import Blog from "./models/blog.js";
-import Catalog from "./models/catalog.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -75,6 +74,7 @@ app.use("/consult", consultRoute);
 app.use("/blog", blogRoute);
 app.use("/catalog", catalogRoute);
 app.use("/sites", sitesRoute);
+app.use("/image-position", imagePositionRoute);
 app.get("/hello", (req, res) => {
   return res.json("salom");
 });

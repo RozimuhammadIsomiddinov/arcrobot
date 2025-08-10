@@ -1,7 +1,22 @@
-import ImagePosition from "../../models/imageposition";
+import Catalog from "../../models/catalog.js";
+import ImagePosition from "../../models/imageposition.js";
 
-const createImagePosition = async (data) => {
-  const { title, top, left_pos, image } = data;
-  return await ImagePosition.create({});
+export const createImagePosition = async (data) => {
+  const { catalog_id, image_url, title, top, left_pos, description, image } =
+    data;
+  const catalog = await Catalog.findByPk(catalog_id);
+  if (!catalog) throw new Error("catalog not found");
+  return await ImagePosition.create({
+    catalog_id,
+    image_url,
+    title,
+    top,
+    left_pos,
+    description,
+    image,
+  });
 };
-const selectImagePosition = async();
+
+export const selectImagePosition = async (id) => {
+  return await ImagePosition.findByPk(id);
+};
