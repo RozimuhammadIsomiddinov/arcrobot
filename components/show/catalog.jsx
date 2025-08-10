@@ -50,7 +50,18 @@ const CatalogList = () => {
     return <Box padding="xl">Загрузка...</Box>;
   }
 
+  // Oddiy chap hujayra style
   const leftCellStyle = { fontWeight: "bold", borderRight: "2px solid #ccc" };
+
+  // Название uchun matnni kesish va maksimal kenglik berish
+  const textCellStyle = {
+    fontWeight: "bold",
+    borderRight: "2px solid #ccc",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    maxWidth: 200,
+  };
 
   return (
     <Box variant="grey" padding="xl">
@@ -59,7 +70,7 @@ const CatalogList = () => {
         <TableHead>
           <TableRow>
             <TableCell style={leftCellStyle}>ID</TableCell>
-            <TableCell style={leftCellStyle}>Название</TableCell>
+            <TableCell style={textCellStyle}>Название</TableCell>
             <TableCell style={leftCellStyle}>Изображения</TableCell>
             <TableCell style={leftCellStyle}>Дата создания</TableCell>
             <TableCell>Действия</TableCell>
@@ -76,7 +87,9 @@ const CatalogList = () => {
             catalogs.map((catalog) => (
               <TableRow key={catalog.id}>
                 <TableCell style={leftCellStyle}>{catalog.id}</TableCell>
-                <TableCell style={leftCellStyle}>{catalog.name}</TableCell>
+                <TableCell style={textCellStyle} title={catalog.name}>
+                  {catalog.name}
+                </TableCell>
                 <TableCell style={leftCellStyle}>
                   {catalog.images.length > 0 ? (
                     catalog.images.map((img, idx) => (
