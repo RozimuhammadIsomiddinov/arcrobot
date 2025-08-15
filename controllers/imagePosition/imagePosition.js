@@ -19,10 +19,10 @@ const createImagePositionCont = async (req, res) => {
 
 const selectImagePositionByIDCont = async (req, res) => {
   try {
-    const { id } = req.params;
-    const position = await selectImagePosition(id);
+    const { image_url } = req.params;
+    const position = await selectImagePosition(image_url);
 
-    if (!position) {
+    if (position.length == 0) {
       return res.status(404).json({ message: "Position not found" });
     }
 

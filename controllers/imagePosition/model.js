@@ -17,6 +17,8 @@ export const createImagePosition = async (data) => {
   });
 };
 
-export const selectImagePosition = async (id) => {
-  return await ImagePosition.findByPk(id);
+export const selectImagePosition = async (image_url) => {
+  return await ImagePosition.findAll({
+    where: { image_url },
+  });
 };

@@ -100,15 +100,15 @@ const router = express.Router();
 
 /**
  * @swagger
- * /image-position/{id}:
+ * /image-position/{image_url}:
  *   get:
  *     summary: Получить позицию изображения по ID
  *     tags: [ImagePosition]
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: image_url
  *         schema:
- *           type: integer
+ *           type: string
  *         required: true
  *         description: ID позиции изображения
  *     responses:
@@ -145,6 +145,6 @@ router.post("/create", upload.single("image"), async (req, res) => {
   }
 });
 
-router.get("/:id", selectImagePositionByIDCont);
+router.get("/:image_url", selectImagePositionByIDCont);
 
 export default router;
