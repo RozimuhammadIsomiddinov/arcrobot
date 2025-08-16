@@ -82,16 +82,28 @@ const Components = {
     "editCatalog",
     path.resolve("components/edit/catalog.jsx")
   ),
+  aboutPage: componentLoader.add(
+    "aboutPage",
+    path.resolve("components/About.jsx")
+  ),
 };
 
 const adminJs = new AdminJS({
   componentLoader,
   defaultTheme: dark.id,
   availableThemes: [dark, light, noSidebar],
+  pages: {
+    about: {
+      label: "About",
+      component: Components.aboutPage,
+    },
+  },
   resources: [
     {
       resource: Catalog,
       options: {
+        navigation: { name: "каталог", icon: "CheckCircle" },
+        name: "Заказы",
         properties: {
           images: { components: { show: Components.showImagesCatalog } },
           property: { components: { show: Components.propertyTable } },
@@ -107,6 +119,8 @@ const adminJs = new AdminJS({
     {
       resource: Order,
       options: {
+        navigation: { name: "заявка", icon: "ShoppingCart" },
+
         actions: {
           list: { component: Components.orderList },
           new: { isVisible: false },
@@ -118,6 +132,8 @@ const adminJs = new AdminJS({
     {
       resource: Sites,
       options: {
+        navigation: { name: "Сайты", icon: "Globe" },
+        name: "Сайты",
         actions: {
           list: { component: Components.siteList },
           edit: { component: Components.sitesEdit },
@@ -128,9 +144,8 @@ const adminJs = new AdminJS({
     {
       resource: Blog,
       options: {
-        properties: {
-          //   images: { components: { show: Components.showImages } },
-        },
+        navigation: { name: "Блог", icon: "BookOpen" },
+
         actions: {
           list: { component: Components.blogList },
           new: { component: Components.blogCreate },
@@ -140,6 +155,12 @@ const adminJs = new AdminJS({
       },
     },
   ],
+  pages: {
+    about: {
+      label: "О проекте",
+      component: Components.aboutPage,
+    },
+  },
   rootPath: "/admin",
   dashboard: { component: Components.customDashboard },
   branding: { companyName: "Arcbot Admin" },

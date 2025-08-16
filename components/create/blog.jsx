@@ -1,10 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Label, Button, Input } from "@adminjs/design-system";
-
 import axios from "axios";
+import { Editor } from "primereact/editor";
 
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+// PrimeReact CSS fayllarini dinamik ravishda qo'shish
+const addPrimeStyles = () => {
+  const themeUrl =
+    "https://cdn.jsdelivr.net/npm/primereact@9.6.0/resources/themes/lara-light-blue/theme.css";
+  const coreUrl =
+    "https://cdn.jsdelivr.net/npm/primereact@9.6.0/resources/primereact.min.css";
+  const iconsUrl =
+    "https://cdn.jsdelivr.net/npm/primeicons@6.0.1/primeicons.css";
+
+  const existingLinks = Array.from(document.head.querySelectorAll("link")).map(
+    (link) => link.href
+  );
+
+  if (!existingLinks.includes(themeUrl)) {
+    const themeLink = document.createElement("link");
+    themeLink.rel = "stylesheet";
+    themeLink.href = themeUrl;
+    document.head.appendChild(themeLink);
+  }
+
+  if (!existingLinks.includes(coreUrl)) {
+    const coreLink = document.createElement("link");
+    coreLink.rel = "stylesheet";
+    coreLink.href = coreUrl;
+    document.head.appendChild(coreLink);
+  }
+
+  if (!existingLinks.includes(iconsUrl)) {
+    const iconsLink = document.createElement("link");
+    iconsLink.rel = "stylesheet";
+    iconsLink.href = iconsUrl;
+    document.head.appendChild(iconsLink);
+  }
+};
 
 const BlogCreate = () => {
   const [title, setTitle] = useState("");
@@ -12,6 +44,11 @@ const BlogCreate = () => {
   const [description, setDescription] = useState("");
   const [inputs, setInputs] = useState([{ id: Date.now(), file: null }]);
   const [uploaded, setUploaded] = useState([]);
+
+  // PrimeReact stillarini komponent yuklanganda qo'shish
+  useEffect(() => {
+    addPrimeStyles();
+  }, []);
 
   const handleFileChange = (index, file) => {
     const newInputs = [...inputs];
@@ -52,9 +89,39 @@ const BlogCreate = () => {
       window.location.href = "/admin/resources/blog";
     } catch (err) {
       console.error(err);
-      alert("Ошибка: " + err.message);
+      alert("Ошибка: " + (err.response?.data?.message || err.message));
     }
   };
+
+  // Editor uchun toolbar konfiguratsiyasi
+
+  const headerTemplate = (
+    <span className="ql-formats">
+      <button className="ql-bold" aria-label="Bold"></button>
+      <button className="ql-italic" aria-label="Italic"></button>
+      <button className="ql-underline" aria-label="Underline"></button>
+      <button className="ql-strike" aria-label="Strike"></button>
+
+      <select className="ql-header">
+        <option value="1">Heading 1</option>
+        <option value="2">Heading 2</option>
+        <option selected>Normal</option>
+      </select>
+
+      <button
+        className="ql-list"
+        value="ordered"
+        aria-label="Ordered List"
+      ></button>
+      <button
+        className="ql-list"
+        value="bullet"
+        aria-label="Unordered List"
+      ></button>
+      <button className="ql-link" aria-label="Link"></button>
+      <button className="ql-image" aria-label="Image"></button>
+    </span>
+  );
 
   return (
     <Box flex flexDirection="column" alignItems="center" mt="xl" width="100%">
@@ -82,40 +149,36 @@ const BlogCreate = () => {
         />
       </Box>
 
-      {/* Description */}
-      <Box mb="md" width="50%">
+      {/* Description - PrimeReact Editor */}
+
+      <Box
+        mb="md"
+        width="50%"
+        style={{
+          backgroundColor: "rgba(104, 144, 156, 0.8)",
+          padding: "10px",
+          borderRadius: "8px",
+          color: "white",
+        }}
+      >
         <Label>Описание</Label>
-        <CKEditor
-          editor={ClassicEditor}
-          data={description}
-          config={{
-            heading: {
-              options: [
-                {
-                  model: "paragraph",
-                  title: "Абзац",
-                  class: "ck-heading_paragraph",
-                },
-              ],
-            },
+        <div
+          style={{
+            border: "1px solid #ced4da",
+            borderRadius: "6px",
+            overflow: "hidden",
           }}
-          onReady={(editor) => {
-            editor.editing.view.change((writer) => {
-              writer.setStyle(
-                "color",
-                "black",
-                editor.editing.view.document.getRoot()
-              );
-            });
-          }}
-          onChange={(event, editor) => {
-            const data = editor.getData();
-            setDescription(data);
-          }}
-        />
+        >
+          <Editor
+            value={description}
+            onTextChange={(e) => setDescription(e.htmlValue)}
+            headerTemplate={headerTemplate}
+            style={{ height: "320px", color: "black" }}
+          />
+        </div>
       </Box>
 
-      {/* Images Upload Inputs Container */}
+      {/* Images Upload */}
       <Label mb="lg" style={{ fontSize: "20px", fontWeight: "bold" }}>
         Изображения (максимум 10)
       </Label>
@@ -216,19 +279,66 @@ const BlogCreate = () => {
           e.preventDefault();
           handleUpload();
         }}
+        style={{
+          backgroundColor: "#0d6efd",
+          padding: "12px 24px",
+          fontSize: "16px",
+        }}
       >
         🚀 Сохранить
       </Button>
 
-      <ul style={{ marginTop: "20px", textAlign: "center" }}>
-        {uploaded.map((file, idx) => (
-          <li key={idx}>
-            <a href={file} target="_blank" rel="noreferrer">
-              {file}
-            </a>
-          </li>
-        ))}
-      </ul>
+      {uploaded.length > 0 && (
+        <Box mt="xl" width="80%">
+          <Label style={{ fontSize: "18px", marginBottom: "10px" }}>
+            Загруженные изображения:
+          </Label>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+              gap: "15px",
+            }}
+          >
+            {uploaded.map((file, idx) => (
+              <div
+                key={idx}
+                style={{
+                  border: "1px solid #eee",
+                  borderRadius: "8px",
+                  padding: "10px",
+                  textAlign: "center",
+                }}
+              >
+                <img
+                  src={file}
+                  alt={`uploaded-${idx}`}
+                  style={{
+                    width: "100%",
+                    height: "120px",
+                    objectFit: "cover",
+                    borderRadius: "6px",
+                  }}
+                />
+                <a
+                  href={file}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    display: "block",
+                    marginTop: "8px",
+                    fontSize: "14px",
+                    color: "#0d6efd",
+                    textDecoration: "none",
+                  }}
+                >
+                  Посмотреть
+                </a>
+              </div>
+            ))}
+          </div>
+        </Box>
+      )}
     </Box>
   );
 };

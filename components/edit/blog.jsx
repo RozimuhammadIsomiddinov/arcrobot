@@ -1,8 +1,70 @@
 import React, { useState, useEffect } from "react";
 import { Box, Label, Input, Button } from "@adminjs/design-system";
 import axios from "axios";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import { Editor } from "primereact/editor";
+
+// PrimeReact CSS dinamik ulash
+const addPrimeStyles = () => {
+  const themeUrl =
+    "https://cdn.jsdelivr.net/npm/primereact@9.6.0/resources/themes/lara-light-blue/theme.css";
+  const coreUrl =
+    "https://cdn.jsdelivr.net/npm/primereact@9.6.0/resources/primereact.min.css";
+  const iconsUrl =
+    "https://cdn.jsdelivr.net/npm/primeicons@6.0.1/primeicons.css";
+
+  const existing = Array.from(document.head.querySelectorAll("link")).map(
+    (l) => l.href
+  );
+
+  if (!existing.includes(themeUrl)) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = themeUrl;
+    document.head.appendChild(link);
+  }
+  if (!existing.includes(coreUrl)) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = coreUrl;
+    document.head.appendChild(link);
+  }
+  if (!existing.includes(iconsUrl)) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = iconsUrl;
+    document.head.appendChild(link);
+  }
+};
+
+// Editor toolbar
+
+const headerTemplate = (
+  <span className="ql-formats">
+    <button className="ql-bold" aria-label="Bold"></button>
+    <button className="ql-italic" aria-label="Italic"></button>
+    <button className="ql-underline" aria-label="Underline"></button>
+    <button className="ql-strike" aria-label="Strike"></button>
+
+    <select className="ql-header">
+      <option value="1">Heading 1</option>
+      <option value="2">Heading 2</option>
+      <option selected>Normal</option>
+    </select>
+
+    <button
+      className="ql-list"
+      value="ordered"
+      aria-label="Ordered List"
+    ></button>
+    <button
+      className="ql-list"
+      value="bullet"
+      aria-label="Unordered List"
+    ></button>
+    <button className="ql-link" aria-label="Link"></button>
+    <button className="ql-image" aria-label="Image"></button>
+  </span>
+);
 
 const BlogEditImages = (props) => {
   const recordId = props.record?.id;
@@ -90,10 +152,10 @@ const BlogEditImages = (props) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Ma'lumotlar saqlandi");
+      alert("Данные сохранены");
       window.location.href = "/admin/resources/blog";
     } catch (err) {
-      alert("Saqlashda xatolik: " + err.message);
+      alert("Ошибка при сохранении:" + err.message);
       console.error(err);
     }
   };
@@ -131,35 +193,22 @@ const BlogEditImages = (props) => {
       </Box>
 
       {/* Description with CKEditor */}
-      <Box mb="md" width="50%">
+      <Box
+        mb="md"
+        width="70%"
+        style={{
+          backgroundColor: "rgba(104, 144, 156, 0.1)",
+          padding: "10px",
+          borderRadius: "8px",
+          color: "white",
+        }}
+      >
         <Label>Описание</Label>
-        <CKEditor
-          editor={ClassicEditor}
-          data={description}
-          config={{
-            heading: {
-              options: [
-                {
-                  model: "paragraph",
-                  title: "Абзац",
-                  class: "ck-heading_paragraph",
-                },
-              ],
-            },
-          }}
-          onReady={(editor) => {
-            editor.editing.view.change((writer) => {
-              writer.setStyle(
-                "color",
-                "black",
-                editor.editing.view.document.getRoot()
-              );
-            });
-          }}
-          onChange={(event, editor) => {
-            const data = editor.getData();
-            setDescription(data);
-          }}
+        <Editor
+          value={description}
+          onTextChange={(e) => setDescription(e.htmlValue)}
+          headerTemplate={headerTemplate}
+          style={{ height: "300px" }}
         />
       </Box>
 

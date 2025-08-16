@@ -1,6 +1,70 @@
 import React, { useState, useEffect } from "react";
 import { Box, Label, Input, Button } from "@adminjs/design-system";
 import axios from "axios";
+import { Editor } from "primereact/editor";
+
+// PrimeReact CSS dinamik ulash
+const addPrimeStyles = () => {
+  const themeUrl =
+    "https://cdn.jsdelivr.net/npm/primereact@9.6.0/resources/themes/lara-light-blue/theme.css";
+  const coreUrl =
+    "https://cdn.jsdelivr.net/npm/primereact@9.6.0/resources/primereact.min.css";
+  const iconsUrl =
+    "https://cdn.jsdelivr.net/npm/primeicons@6.0.1/primeicons.css";
+
+  const existing = Array.from(document.head.querySelectorAll("link")).map(
+    (l) => l.href
+  );
+
+  if (!existing.includes(themeUrl)) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = themeUrl;
+    document.head.appendChild(link);
+  }
+  if (!existing.includes(coreUrl)) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = coreUrl;
+    document.head.appendChild(link);
+  }
+  if (!existing.includes(iconsUrl)) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = iconsUrl;
+    document.head.appendChild(link);
+  }
+};
+
+// Editor toolbar
+
+const headerTemplate = (
+  <span className="ql-formats">
+    <button className="ql-bold" aria-label="Bold"></button>
+    <button className="ql-italic" aria-label="Italic"></button>
+    <button className="ql-underline" aria-label="Underline"></button>
+    <button className="ql-strike" aria-label="Strike"></button>
+
+    <select className="ql-header">
+      <option value="1">Heading 1</option>
+      <option value="2">Heading 2</option>
+      <option selected>Normal</option>
+    </select>
+
+    <button
+      className="ql-list"
+      value="ordered"
+      aria-label="Ordered List"
+    ></button>
+    <button
+      className="ql-list"
+      value="bullet"
+      aria-label="Unordered List"
+    ></button>
+    <button className="ql-link" aria-label="Link"></button>
+    <button className="ql-image" aria-label="Image"></button>
+  </span>
+);
 
 const CatalogEdit = (props) => {
   const recordId = props.record?.id;
@@ -14,6 +78,10 @@ const CatalogEdit = (props) => {
   const [newImages, setNewImages] = useState([]);
   const [properties, setProperties] = useState([]);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    addPrimeStyles();
+  }, []);
 
   // Ma'lumotlarni olish
   useEffect(() => {
@@ -75,7 +143,7 @@ const CatalogEdit = (props) => {
         }
         setProperties(parsedProps);
       } catch (err) {
-        setError("Ma'lumotlarni olishda xatolik");
+        setError("Ошибка при получении данных");
         console.error(err.message);
       } finally {
         setLoading(false);
@@ -128,7 +196,6 @@ const CatalogEdit = (props) => {
     });
   };
 
-  // Saqlas
   // Saqlash
   const handleSave = async () => {
     if (images.length === 0 && newImages.length === 0) {
@@ -208,13 +275,22 @@ const CatalogEdit = (props) => {
       </Box>
 
       {/* Description */}
-      <Box mb="md" width="50%">
+      <Box
+        mb="md"
+        width="70%"
+        style={{
+          backgroundColor: "rgba(104, 144, 156, 0.1)",
+          padding: "10px",
+          borderRadius: "8px",
+          color: "white",
+        }}
+      >
         <Label>Описание</Label>
-        <Input
+        <Editor
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Введите описание"
-          width="100%"
+          onTextChange={(e) => setDescription(e.htmlValue)}
+          headerTemplate={headerTemplate}
+          style={{ height: "300px" }}
         />
       </Box>
 

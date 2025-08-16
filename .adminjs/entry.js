@@ -29,3 +29,5 @@ import MultiFileCatalog from '../components/create/catalog'
 AdminJS.UserComponents.MultiFileCatalog = MultiFileCatalog
 import editCatalog from '../components/edit/catalog'
 AdminJS.UserComponents.editCatalog = editCatalog
+import aboutPage from '../components/About'
+AdminJS.UserComponents.aboutPage = aboutPage

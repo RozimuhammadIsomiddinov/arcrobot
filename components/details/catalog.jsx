@@ -178,6 +178,12 @@ const CatalogDetails = (props) => {
                   borderRadius: "8px",
                   boxShadow: "0 1px 3px rgba(0,0,0,0.5)",
                   border: "1px solid #333",
+                  cursor: "pointer",
+                }}
+                onClick={() => {
+                  window.location.href = `/admin/pages/about?image_url=${encodeURIComponent(
+                    img
+                  )}`;
                 }}
                 onError={(e) => {
                   e.target.src =
