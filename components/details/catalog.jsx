@@ -19,7 +19,7 @@ const CatalogDetails = (props) => {
     if (!id) return;
     const fetchCatalog = async () => {
       try {
-        const res = await axios.get(`/catalog/${id}`);
+        const res = await axios.get(`/api/catalog/${id}`);
         const data = res.data;
 
         // Universal image parse

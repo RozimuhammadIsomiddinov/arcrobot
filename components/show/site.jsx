@@ -39,7 +39,7 @@ const SiteList = () => {
 
   const handleDetailsClick = async (id) => {
     try {
-      const res = await axios.get(`/sites/${id}`);
+      const res = await axios.get(`/api/sites/${id}`);
       setSelectedSite(res.data);
       setModalOpen(true);
     } catch (err) {

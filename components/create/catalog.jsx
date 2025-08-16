@@ -148,9 +148,13 @@ const CatalogCreate = () => {
         if (input.file) formData.append("files", input.file);
       });
 
-      await axios.post(`${window.location.origin}/catalog/create`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      await axios.post(
+        `${window.location.origin}/api/catalog/create`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
 
       alert("Каталог успешно создан!");
       window.location.href = "/admin/resources/catalog";

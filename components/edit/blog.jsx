@@ -148,7 +148,7 @@ const BlogEditImages = (props) => {
         formData.append("newImages", file);
       });
 
-      await axios.put(`/blog/update/${recordId}`, formData, {
+      await axios.put(`/api/blog/update/${recordId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

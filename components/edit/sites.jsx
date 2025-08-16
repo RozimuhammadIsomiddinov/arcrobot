@@ -15,7 +15,7 @@ const SiteEditComponent = ({ record }) => {
   const onSubmit = async (event) => {
     event.preventDefault();
     try {
-      await axios.put(`/sites/update/${record.params.id}`, formData);
+      await axios.put(`/api/sites/update/${record.params.id}`, formData);
       alert("Сохранено успешно!");
       window.location.href = "/admin/resources/sites";
     } catch (error) {

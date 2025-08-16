@@ -93,7 +93,7 @@ const CatalogEdit = (props) => {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(`/catalog/${recordId}`);
+        const res = await axios.get(`/api/catalog/${recordId}`);
         const data = res.data;
 
         setName(data.name || "");
@@ -230,7 +230,7 @@ const CatalogEdit = (props) => {
         formData.append("newImages", file);
       });
 
-      await axios.put(`/catalog/update/${recordId}`, formData, {
+      await axios.put(`/api/catalog/update/${recordId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

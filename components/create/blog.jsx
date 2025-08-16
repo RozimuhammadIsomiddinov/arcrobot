@@ -79,7 +79,7 @@ const BlogCreate = () => {
       formData.append("description", description);
 
       const res = await axios.post(
-        `${window.location.origin}/blog/create`,
+        `${window.location.origin}/api/blog/create`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );
