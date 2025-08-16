@@ -20,7 +20,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /blog:
+ * /api/blog:
  *   get:
  *     summary: Get all blogs with pagination
  *     tags: [Blog]
@@ -71,7 +71,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /blog/{id}:
+ * /api/blog/{id}:
  *   get:
  *     summary: Get blog by ID
  *     tags: [Blog]

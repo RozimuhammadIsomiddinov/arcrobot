@@ -14,7 +14,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /consult:
+ * /api/consult:
  *   get:
  *     summary: Get all consultations
  *     tags: [Consult]
@@ -31,7 +31,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /consult/{id}:
+ * /api/consult/{id}:
  *   get:
  *     summary: Get consultation by ID
  *     tags: [Consult]
@@ -55,7 +55,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /consult/create:
+ * /api/consult/create:
  *   post:
  *     summary: Create a new consultation
  *     tags: [Consult]

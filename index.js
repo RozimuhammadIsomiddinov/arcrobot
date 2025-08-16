@@ -68,16 +68,14 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 app.use("/public", express.static(path.join(__dirname, "public")));
-app.use("/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-app.use("/consult", consultRoute);
-app.use("/blog", blogRoute);
-app.use("/catalog", catalogRoute);
-app.use("/sites", sitesRoute);
-app.use("/image-position", imagePositionRoute);
-app.get("/hello", (req, res) => {
-  return res.json("salom");
-});
+app.use("/api/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+app.use("/api/consult", consultRoute);
+app.use("/api/blog", blogRoute);
+app.use("/api/catalog", catalogRoute);
+app.use("/api/sites", sitesRoute);
+app.use("/api/image-position", imagePositionRoute);
 
 app.listen(process.env.PORT, () => {
   console.log("listened");

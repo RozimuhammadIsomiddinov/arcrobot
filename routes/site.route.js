@@ -16,7 +16,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /sites:
+ * /api/sites:
  *   get:
  *     summary: Get all sites with pagination
  *     tags: [Sites]
@@ -67,7 +67,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /sites/{id}:
+ * /api/sites/{id}:
  *   get:
  *     summary: Get site by ID
  *     tags: [Sites]

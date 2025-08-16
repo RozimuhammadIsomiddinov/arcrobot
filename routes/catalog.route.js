@@ -17,7 +17,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /catalog:
+ * /api/catalog:
  *   get:
  *     summary: Get all catalogs with pagination
  *     tags: [Catalog]
@@ -68,7 +68,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /catalog/{id}:
+ * /api/catalog/{id}:
  *   get:
  *     summary: Get catalog by ID
  *     tags: [Catalog]

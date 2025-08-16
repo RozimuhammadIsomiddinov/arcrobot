@@ -50,7 +50,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /image-position/create:
+ * /api/image-position/create:
  *   post:
  *     summary: Создать новую позицию изображения с загрузкой файла
  *     tags: [ImagePosition]
@@ -100,7 +100,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /image-position/{image_url}:
+ * /api/image-position/{image_url}:
  *   get:
  *     summary: Получить позицию изображения по ID
  *     tags: [ImagePosition]
