@@ -24,7 +24,7 @@ const SiteList = () => {
   const fetchSites = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/sites"); // API endpoint
+      const res = await axios.get("/api/sites"); // API endpoint
       setSites(res.data.data || []);
     } catch (err) {
       console.error("Error fetching sites:", err);

@@ -19,7 +19,7 @@ const CatalogList = () => {
   const fetchCatalogs = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/catalog");
+      const res = await axios.get("/api/catalog");
       const data = res.data.data || [];
 
       const normalized = data.map((item) => ({

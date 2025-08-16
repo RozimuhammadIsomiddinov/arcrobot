@@ -89,7 +89,7 @@ const BlogEditImages = (props) => {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(`/blog/${recordId}`);
+        const res = await axios.get(`/api/blog/${recordId}`);
         const data = res.data;
         setTitle(data.title || "");
         setSubtitles(data.subtitles || "");

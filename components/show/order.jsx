@@ -24,7 +24,7 @@ const CustomOrderList = () => {
   const fetchOrders = async (pageNum) => {
     setLoading(true);
     try {
-      const res = await axios.get("/consult", {
+      const res = await axios.get("/api/consult", {
         params: { page: pageNum, pageSize },
       });
       setOrders(res.data.data);

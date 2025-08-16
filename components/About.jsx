@@ -7,7 +7,7 @@ function About() {
   const queryParams = new URLSearchParams(location.search);
   const IMAGE_URL =
     queryParams.get("image_url") ||
-    "http://62.113.109.158:7007/public/images/photo_2025-08-10_16-39-35.jpg";
+    "https://arcrobot.ru/public/images/photo_2025-08-10_16-39-35.jpg";
 
   const imgRef = useRef(null);
   const [points, setPoints] = useState([]);
@@ -26,7 +26,7 @@ function About() {
   const fetchPoints = async () => {
     try {
       const { data } = await axios.get(
-        `http://62.113.109.158:7007/image-position/${encodeURIComponent(
+        `https://arcrobot.ru/api/image-position/${encodeURIComponent(
           IMAGE_URL
         )}`
       );
@@ -67,14 +67,10 @@ function About() {
     data.append("image", formData.image);
 
     try {
-      await axios.post(
-        "http://62.113.109.158:7007/image-position/create",
-        data,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        }
-      );
+      await axios.post("https://arcrobot.ru/api/image-position/create", data, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
       setFormData({ ...formData, title: "", description: "", image: null });
       fetchPoints();
       setIsAddMode(false);
