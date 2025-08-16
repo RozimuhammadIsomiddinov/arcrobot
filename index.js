@@ -55,6 +55,9 @@ const swaggerOptions = {
     },
     servers: [
       {
+        url: "https://arcrobot.ru",
+      },
+      {
         url: "http://62.113.109.158:7007",
       },
       {
