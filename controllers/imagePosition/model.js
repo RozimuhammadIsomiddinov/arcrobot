@@ -5,6 +5,7 @@ export const createImagePosition = async (data) => {
   const { catalog_id, image_url, title, top, left_pos, description, image } =
     data;
   const catalog = await Catalog.findByPk(catalog_id);
+  console.log(catalog);
   if (!catalog) throw new Error("catalog not found");
   return await ImagePosition.create({
     catalog_id,
