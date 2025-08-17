@@ -6,12 +6,13 @@ function About() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const IMAGE_URL = queryParams.get("image_url");
+  const catalog_id = queryParams.get("id");
 
   const imgRef = useRef(null);
   const [points, setPoints] = useState([]);
   const [isAddMode, setIsAddMode] = useState(false);
   const [formData, setFormData] = useState({
-    catalog_id: 5,
+    catalog_id,
     title: "",
     description: "",
     top: 0,
