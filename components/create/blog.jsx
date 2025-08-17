@@ -131,7 +131,6 @@ const BlogCreate = () => {
         <Input
           value={title}
           width="100%"
-          style={{ padding: "1rem" }}
           onChange={(e) => setTitle(e.target.value)}
           placeholder="Введите заголовок"
         />
@@ -140,10 +139,19 @@ const BlogCreate = () => {
       {/* Subtitles */}
       <Box mb="md" width="50%">
         <Label>Подзаголовок</Label>
-        <Input
+        <textarea
           value={subtitles}
-          width="100%"
-          style={{ padding: "1rem" }}
+          style={{
+            width: "100%",
+            padding: "1rem",
+            border: "1px solid #d9d9d9",
+            borderRadius: "4px",
+            fontSize: "14px",
+            fontFamily: "inherit",
+            minHeight: "100px",
+            backgroundColor: "black",
+            color: "white",
+          }}
           onChange={(e) => setSubtitles(e.target.value)}
           placeholder="Введите подзаголовок"
         />
@@ -155,7 +163,6 @@ const BlogCreate = () => {
         mb="md"
         width="50%"
         style={{
-          backgroundColor: "rgba(104, 144, 156, 0.8)",
           padding: "10px",
           borderRadius: "8px",
           color: "white",
@@ -173,7 +180,7 @@ const BlogCreate = () => {
             value={description}
             onTextChange={(e) => setDescription(e.htmlValue)}
             headerTemplate={headerTemplate}
-            style={{ height: "320px", color: "black" }}
+            style={{ height: "320px", color: "white" }}
           />
         </div>
       </Box>

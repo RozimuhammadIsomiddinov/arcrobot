@@ -184,7 +184,18 @@ const BlogEditImages = (props) => {
       {/* Subtitles */}
       <Box mb="md" width="50%">
         <Label>Подзаголовок</Label>
-        <Input
+        <textarea
+          style={{
+            width: "100%",
+            padding: "1rem",
+            border: "1px solid #d9d9d9",
+            borderRadius: "4px",
+            fontSize: "14px",
+            fontFamily: "inherit",
+            minHeight: "100px",
+            backgroundColor: "black",
+            color: "white",
+          }}
           value={subtitles}
           onChange={(e) => setSubtitles(e.target.value)}
           placeholder="Введите подзаголовок"

@@ -274,8 +274,8 @@ function About() {
         {showModal && (
           <div className="backdrop" onClick={() => setShowModal(false)}>
             <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <h3>{activePoint?.title}</h3>
-              <p>{activePoint?.description}</p>
+              <h3 style={{ color: "black" }}>{activePoint?.title}</h3>
+              <p style={{ color: "black" }}>{activePoint?.description}</p>
               {activePoint?.image && (
                 <img
                   src={activePoint.image}

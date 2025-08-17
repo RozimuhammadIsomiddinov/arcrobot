@@ -171,13 +171,31 @@ const CatalogCreate = () => {
       {/* Name */}
       <Box mb="md" width="70%">
         <Label>Название</Label>
-        <Input value={name} onChange={(e) => setName(e.target.value)} />
+        <Input
+          value={name}
+          width="100%"
+          onChange={(e) => setName(e.target.value)}
+        />
       </Box>
 
       {/* Title */}
       <Box mb="md" width="70%">
         <Label>Заголовок</Label>
-        <Input value={title} onChange={(e) => setTitle(e.target.value)} />
+        <textarea
+          value={title}
+          style={{
+            width: "100%",
+            padding: "1rem",
+            border: "1px solid #d9d9d9",
+            borderRadius: "4px",
+            fontSize: "14px",
+            fontFamily: "inherit",
+            minHeight: "100px",
+            backgroundColor: "black",
+            color: "white",
+          }}
+          onChange={(e) => setTitle(e.target.value)}
+        />
       </Box>
 
       {/* Description */}
