@@ -6,6 +6,7 @@ export const createImagePosition = async (data) => {
     data;
   const catalog = await Catalog.findByPk(parseInt(catalog_id));
   console.log(data);
+  console.log(catalog);
   if (!catalog) throw new Error("catalog not found");
   return await ImagePosition.create({
     catalog_id,
