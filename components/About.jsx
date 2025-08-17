@@ -30,7 +30,7 @@ function About() {
       const fullUrl = `${url_end}/${imageName}`;
 
       const { data } = await axios.get(
-        `https://arcrobot.ru/api/image-position?image_url=${encodeURIComponent(
+        `https://arcrobot.ru/api/image-position/${encodeURIComponent(
           IMAGE_URL
         )}`
       );
