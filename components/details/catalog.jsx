@@ -183,7 +183,7 @@ const CatalogDetails = (props) => {
                 onClick={() => {
                   window.location.href = `/admin/pages/about?image_url=${encodeURIComponent(
                     img
-                  )}`;
+                  )}&id=${catalog.id}`;
                 }}
                 onError={(e) => {
                   e.target.src =
