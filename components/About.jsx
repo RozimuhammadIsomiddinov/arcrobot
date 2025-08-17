@@ -23,10 +23,13 @@ function About() {
 
   const fetchPoints = async () => {
     try {
+      const imageName = IMAGE_URL.split("/").pop();
+
+      const url_end = "https://arcrobot.ru/public/images";
+      const fullUrl = `${url_end}/${imageName}`;
+
       const { data } = await axios.get(
-        `https://arcrobot.ru/api/image-position/${encodeURIComponent(
-          IMAGE_URL
-        )}`
+        `https://arcrobot.ru/api/image-position/${encodeURIComponent(fullUrl)}`
       );
       setPoints(data);
     } catch (err) {
