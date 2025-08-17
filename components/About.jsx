@@ -30,7 +30,7 @@ function About() {
 
       const { data } = await axios.get(
         `https://arcrobot.ru/api/image-position?image_url=${encodeURIComponent(
-          fullUrl
+          IMAGE_URL
         )}`
       );
       setPoints(data);
