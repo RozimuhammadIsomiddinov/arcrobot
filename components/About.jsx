@@ -29,7 +29,9 @@ function About() {
       const fullUrl = `${url_end}/${imageName}`;
 
       const { data } = await axios.get(
-        `https://arcrobot.ru/api/image-position/${encodeURIComponent(fullUrl)}`
+        `https://arcrobot.ru/api/image-position?image_url=${encodeURIComponent(
+          fullUrl
+        )}`
       );
       setPoints(data);
     } catch (err) {
