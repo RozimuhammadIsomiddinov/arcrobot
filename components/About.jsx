@@ -25,7 +25,7 @@ function About() {
     try {
       const imageName = IMAGE_URL.split("/").pop();
       const { data } = await axios.get(
-        `https://arcrobot.ru/api/image-position/${imageName(IMAGE_URL)}`
+        `https://arcrobot.ru/api/image-position/${imageName}`
       );
       setPoints(data);
     } catch (err) {
