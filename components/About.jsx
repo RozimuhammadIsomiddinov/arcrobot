@@ -5,9 +5,7 @@ import { useLocation } from "react-router-dom";
 function About() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const IMAGE_URL =
-    queryParams.get("image_url") ||
-    "https://arcrobot.ru/public/images/photo_2025-08-10_16-39-35.jpg";
+  const IMAGE_URL = queryParams.get("image_url");
 
   const imgRef = useRef(null);
   const [points, setPoints] = useState([]);
@@ -25,10 +23,9 @@ function About() {
 
   const fetchPoints = async () => {
     try {
+      const imageName = IMAGE_URL.split("/").pop();
       const { data } = await axios.get(
-        `https://arcrobot.ru/api/image-position/${encodeURIComponent(
-          IMAGE_URL
-        )}`
+        `https://arcrobot.ru/api/image-position/${imageName(IMAGE_URL)}`
       );
       setPoints(data);
     } catch (err) {
