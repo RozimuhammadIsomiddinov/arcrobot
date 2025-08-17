@@ -124,7 +124,7 @@ const router = express.Router();
 
 router.post("/create", upload.single("image"), async (req, res) => {
   try {
-    const data = req.body;
+    let data = req.body;
 
     if (req.file) {
       const fileUrl = `${process.env.BACKEND_URL}/${req.file.filename}`;
