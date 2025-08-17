@@ -20,6 +20,9 @@ const createImagePositionCont = async (req, res) => {
 const selectImagePositionByIDCont = async (req, res) => {
   try {
     const { image_url } = req.params;
+
+    image_url = decodeURIComponent(image_url);
+    console.log(image_url);
     const position = await selectImagePosition(image_url);
 
     if (position.length == 0) {
