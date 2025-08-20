@@ -37,14 +37,18 @@ app.use(adminJs.options.rootPath, adminRouter);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-/*  */
-/* app.use( */
-/*   cors({ */
-/*     origin: "*", */
-/*     methods: ["GET", "POST", "PUT", "DELETE"], */
-/*   }) */
-/* ); */
-/*  */
+app.use(
+  cors({
+    origin: [
+      "https://www.arcrobot.ru",
+      "https://arcrobot.vercel.app",
+      "https://arcrobot.ru",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
