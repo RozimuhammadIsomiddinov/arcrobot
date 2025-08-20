@@ -37,14 +37,14 @@ app.use(adminJs.options.rootPath, adminRouter);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-app.use(
-  cors({
-    origin: "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  })
-);
-
+/*  */
+/* app.use( */
+/*   cors({ */
+/*     origin: "*", */
+/*     methods: ["GET", "POST", "PUT", "DELETE"], */
+/*   }) */
+/* ); */
+/*  */
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
