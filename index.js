@@ -43,6 +43,7 @@ app.use(
       "https://www.arcrobot.ru",
       "https://arcrobot.vercel.app",
       "https://arcrobot.ru",
+      "https://api.arcrobot.ru",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,

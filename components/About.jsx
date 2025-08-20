@@ -26,11 +26,11 @@ function About() {
     try {
       const imageName = IMAGE_URL.split("/").pop();
 
-      const url_end = "https://arcrobot.ru/public/images";
+      const url_end = "https://api.arcrobot.ru/public/images";
       const fullUrl = `${url_end}/${imageName}`;
 
       const { data } = await axios.get(
-        `https://arcrobot.ru/api/image-position/${encodeURIComponent(
+        `https://api.arcrobot.ru/api/image-position/${encodeURIComponent(
           IMAGE_URL
         )}`
       );
@@ -71,10 +71,14 @@ function About() {
     data.append("image", formData.image);
 
     try {
-      await axios.post("https://arcrobot.ru/api/image-position/create", data, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
+      await axios.post(
+        "https://api.arcrobot.ru/api/image-position/create",
+        data,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
       setFormData({ ...formData, title: "", description: "", image: null });
       fetchPoints();
       setIsAddMode(false);
