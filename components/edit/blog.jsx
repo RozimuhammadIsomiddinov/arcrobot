@@ -37,20 +37,44 @@ const addPrimeStyles = () => {
 };
 
 // Editor toolbar
-
 const headerTemplate = (
   <span className="ql-formats">
+    {/* Matn stilini sozlash */}
+    <select className="ql-font">
+      <option selected></option>
+      <option value="serif"></option>
+      <option value="monospace"></option>
+    </select>
+
+    <select className="ql-size">
+      <option value="small"></option>
+      <option selected></option>
+      <option value="large"></option>
+      <option value="huge"></option>
+    </select>
+
+    {/* Bold, Italic, Underline va Strike */}
     <button className="ql-bold" aria-label="Bold"></button>
     <button className="ql-italic" aria-label="Italic"></button>
     <button className="ql-underline" aria-label="Underline"></button>
     <button className="ql-strike" aria-label="Strike"></button>
 
+    {/* Heading */}
     <select className="ql-header">
-      <option value="1">Heading 1</option>
-      <option value="2">Heading 2</option>
+      <option value="1">H1</option>
+      <option value="2">H2</option>
+      <option value="3">H3</option>
+      <option value="4">H4</option>
+      <option value="5">H5</option>
+      <option value="6">H6</option>
       <option selected>Normal</option>
     </select>
 
+    {/* Ranglar */}
+    <select className="ql-color"></select>
+    <select className="ql-background"></select>
+
+    {/* Listlar */}
     <button
       className="ql-list"
       value="ordered"
@@ -61,8 +85,31 @@ const headerTemplate = (
       value="bullet"
       aria-label="Unordered List"
     ></button>
+    <button
+      className="ql-indent"
+      value="-1"
+      aria-label="Decrease Indent"
+    ></button>
+    <button
+      className="ql-indent"
+      value="+1"
+      aria-label="Increase Indent"
+    ></button>
+
+    {/* Align */}
+    <select className="ql-align"></select>
+
+    {/* Quote va Code */}
+    <button className="ql-blockquote" aria-label="Blockquote"></button>
+    <button className="ql-code-block" aria-label="Code Block"></button>
+
+    {/* Link, Image, Video */}
     <button className="ql-link" aria-label="Link"></button>
     <button className="ql-image" aria-label="Image"></button>
+    <button className="ql-video" aria-label="Video"></button>
+
+    {/* Tozalash */}
+    <button className="ql-clean" aria-label="Remove Formatting"></button>
   </span>
 );
 
