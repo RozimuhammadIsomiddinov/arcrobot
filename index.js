@@ -39,26 +39,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 /* app.use( */
 /*   cors({ */
-/*     origin: [ */
-/*       "https://www.arcrobot.ru", */
-/*       "https://arcrobot.vercel.app", */
-/*       "https://arcrobot.ru", */
-/*       "https://api.arcrobot.ru", */
-/*     ], */
+/*     origin: "*", // barcha domenlarga ruxsat */
 /*     methods: ["GET", "POST", "PUT", "DELETE"], */
-/*     credentials: true, */
+/*     credentials: false, // "*" bilan credentials ishlamaydi */
 /*   }) */
 /* ); */
 /*  */
-
-app.use(
-  cors({
-    origin: "*", // barcha domenlarga ruxsat
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: false, // "*" bilan credentials ishlamaydi
-  })
-);
-
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",

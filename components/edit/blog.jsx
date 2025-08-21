@@ -96,7 +96,7 @@ const BlogEditImages = (props) => {
         setDescription(data.description || "");
         setImages(Array.isArray(data.images) ? data.images : []);
       } catch (err) {
-        setError("Ma'lumotlarni olishda xatolik");
+        setError("Ошибка при получении данных");
         console.error(err);
       } finally {
         setLoading(false);

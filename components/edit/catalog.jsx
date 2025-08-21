@@ -220,12 +220,12 @@ const CatalogEdit = (props) => {
       );
       formData.append("images", JSON.stringify(images));
 
-      // 🟢 updatedImages — backendga updatedImages[index] formatida yuboriladi
+      //  updatedImages — backendga updatedImages[index] formatida yuboriladi
       Object.entries(updatedImages).forEach(([index, file]) => {
         formData.append("updatedImages", file); // bir nechta file bo‘lishi mumkin
       });
 
-      // 🟢 newImages — backendga newImages sifatida yuboriladi
+      //  newImages — backendga newImages sifatida yuboriladi
       newImages.forEach((file) => {
         formData.append("newImages", file);
       });
@@ -234,7 +234,7 @@ const CatalogEdit = (props) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      alert("Ma'lumotlar saqlandi");
+      alert("Данные сохранены");
       window.location.href = "/admin/resources/catalog";
     } catch (err) {
       alert("Saqlashda xatolik: " + err.message);
