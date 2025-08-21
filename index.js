@@ -33,18 +33,13 @@ if (!fs.existsSync(imagesFolderPath)) {
 
 const app = express();
 
+app.use(cors());
+
 app.use(adminJs.options.rootPath, adminRouter);
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-/* app.use( */
-/*   cors({ */
-/*     origin: "*", // barcha domenlarga ruxsat */
-/*     methods: ["GET", "POST", "PUT", "DELETE"], */
-/*     credentials: false, // "*" bilan credentials ishlamaydi */
-/*   }) */
-/* ); */
-/*  */
+
 const swaggerOptions = {
   swaggerDefinition: {
     openapi: "3.0.0",
@@ -54,15 +49,9 @@ const swaggerOptions = {
       description: "Car management API documentation",
     },
     servers: [
-      {
-        url: "https://api.arcrobot.ru",
-      },
-      {
-        url: "http://62.113.109.158:7007",
-      },
-      {
-        url: "http://localhost:7007",
-      },
+      { url: "https://api.arcrobot.ru" },
+      { url: "http://62.113.109.158:7007" },
+      { url: "http://localhost:7007" },
     ],
   },
   apis: ["./routes/*.js"],
@@ -71,7 +60,6 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 app.use("/public", express.static(path.join(__dirname, "public")));
-
 app.use("/api/swagger", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use("/api/consult", consultRoute);
