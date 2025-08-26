@@ -7,6 +7,7 @@ import blogRoute from "./routes/blog.route.js";
 import catalogRoute from "./routes/catalog.route.js";
 import sitesRoute from "./routes/site.route.js";
 import imagePositionRoute from "./routes/image_position.route.js";
+import workerRoute from "./routes/worker.route.js";
 import { adminJs, adminRouter } from "./admin.config.js";
 import bodyParser from "body-parser";
 
@@ -67,6 +68,7 @@ app.use("/api/blog", blogRoute);
 app.use("/api/catalog", catalogRoute);
 app.use("/api/sites", sitesRoute);
 app.use("/api/image-position", imagePositionRoute);
+app.use("/api/worker", workerRoute);
 
 app.listen(process.env.PORT, () => {
   console.log("listened");

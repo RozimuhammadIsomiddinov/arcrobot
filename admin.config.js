@@ -10,6 +10,7 @@ import Sites from "./models/sites.js";
 import Blog from "./models/blog.js";
 import Catalog from "./models/catalog.js";
 import dotenv from "dotenv";
+import Worker from "./models/worker.js";
 
 dotenv.config();
 AdminJS.registerAdapter({ Database, Resource });
@@ -86,6 +87,20 @@ const Components = {
     "aboutPage",
     path.resolve("components/About.jsx")
   ),
+
+  //worker
+  workerCreate: componentLoader.add(
+    "workerCreate",
+    path.resolve("components/create/worker.jsx")
+  ),
+  workerEdit: componentLoader.add(
+    "workerEdit",
+    path.resolve("components/edit/worker.jsx")
+  ),
+  workerList: componentLoader.add(
+    "workerlist",
+    path.resolve("components/show/worker.jsx")
+  ),
 };
 
 const adminJs = new AdminJS({
@@ -150,6 +165,18 @@ const adminJs = new AdminJS({
           list: { component: Components.blogList },
           new: { component: Components.blogCreate },
           edit: { component: Components.blogEdit },
+          show: { isVisible: false },
+        },
+      },
+    },
+    {
+      resource: Worker,
+      options: {
+        navigation: { name: "Сотрудники", icon: "User" },
+        actions: {
+          list: { component: Components.workerList },
+          new: { component: Components.workerCreate },
+          edit: { component: Components.workerEdit },
           show: { isVisible: false },
         },
       },
