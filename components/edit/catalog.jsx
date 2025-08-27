@@ -123,6 +123,9 @@ const CatalogEdit = (props) => {
   const [images, setImages] = useState([]);
   const [updatedImages, setUpdatedImages] = useState({});
   const [newImages, setNewImages] = useState([]);
+  const [otherImages, setOtherImages] = useState([]);
+  const [updatedOtherImages, setUpdatedOtherImages] = useState({});
+  const [newOtherImages, setNewOtherImages] = useState([]);
   const [properties, setProperties] = useState([]);
   const [error, setError] = useState(null);
 
@@ -167,6 +170,29 @@ const CatalogEdit = (props) => {
         }
         setImages(parsedImages);
 
+        // Other Images parse
+        let parsedOtherImages = [];
+        if (typeof data.other_images === "string") {
+          if (
+            data.other_images.startsWith("{") &&
+            data.other_images.endsWith("}")
+          ) {
+            parsedOtherImages = data.other_images
+              .slice(1, -1)
+              .split(",")
+              .map((url) => url.trim().replace(/^"|"$/g, ""));
+          } else {
+            try {
+              parsedOtherImages = JSON.parse(data.other_images);
+            } catch {
+              parsedOtherImages = [];
+            }
+          }
+        } else if (Array.isArray(data.other_images)) {
+          parsedOtherImages = data.other_images;
+        }
+        setOtherImages(parsedOtherImages);
+
         // Properties parse
         let parsedProps = [];
         if (typeof data.property === "string") {
@@ -200,19 +226,19 @@ const CatalogEdit = (props) => {
     fetchData();
   }, [recordId]);
 
-  // Property qo‘shish
+  // Property qo'shish
   const handleAddProperty = () => {
     setProperties([...properties, { key: "", value: "" }]);
   };
 
-  // Property o‘zgartirish
+  // Property o'zgartirish
   const handlePropertyChange = (index, field, value) => {
     const updated = [...properties];
     updated[index][field] = value;
     setProperties(updated);
   };
 
-  // Property o‘chirish
+  // Property o'chirish
   const handleRemoveProperty = (index) => {
     const updated = [...properties];
     updated.splice(index, 1);
@@ -227,16 +253,40 @@ const CatalogEdit = (props) => {
     }));
   };
 
-  // Yangi rasm qo‘shish
+  // Yangi rasm qo'shish
   const handleAddNewImages = (files) => {
     const filesArr = Array.from(files);
     setNewImages((prev) => [...prev, ...filesArr]);
   };
 
-  // Rasm o‘chirish
+  // Rasm o'chirish
   const handleDeleteImage = (index) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
     setUpdatedImages((prev) => {
+      const copy = { ...prev };
+      delete copy[index];
+      return copy;
+    });
+  };
+
+  // Other image yangilash
+  const handleUpdateOtherImageChange = (index, file) => {
+    setUpdatedOtherImages((prev) => ({
+      ...prev,
+      [index]: file,
+    }));
+  };
+
+  // Yangi other image qo'shish
+  const handleAddNewOtherImages = (files) => {
+    const filesArr = Array.from(files);
+    setNewOtherImages((prev) => [...prev, ...filesArr]);
+  };
+
+  // Other image o'chirish
+  const handleDeleteOtherImage = (index) => {
+    setOtherImages((prev) => prev.filter((_, i) => i !== index));
+    setUpdatedOtherImages((prev) => {
       const copy = { ...prev };
       delete copy[index];
       return copy;
@@ -266,15 +316,26 @@ const CatalogEdit = (props) => {
         )
       );
       formData.append("images", JSON.stringify(images));
+      formData.append("other_images", JSON.stringify(otherImages));
 
-      //  updatedImages — backendga updatedImages[index] formatida yuboriladi
+      // updatedImages — backendga updatedImages[index] formatida yuboriladi
       Object.entries(updatedImages).forEach(([index, file]) => {
-        formData.append("updatedImages", file); // bir nechta file bo‘lishi mumkin
+        formData.append("updatedImages", file);
       });
 
-      //  newImages — backendga newImages sifatida yuboriladi
+      // newImages — backendga newImages sifatida yuboriladi
       newImages.forEach((file) => {
         formData.append("newImages", file);
+      });
+
+      // updatedOtherImages — backendga updatedOtherImages[index] formatida yuboriladi
+      Object.entries(updatedOtherImages).forEach(([index, file]) => {
+        formData.append("updatedOtherImages", file);
+      });
+
+      // newOtherImages — backendga newOtherImages sifatida yuboriladi
+      newOtherImages.forEach((file) => {
+        formData.append("newOtherImages", file);
       });
 
       await axios.put(`/api/catalog/update/${recordId}`, formData, {
@@ -354,7 +415,7 @@ const CatalogEdit = (props) => {
 
       {/* Images */}
       <Box mb="md" width="60%">
-        <Label>Изображения</Label>
+        <Label>Основные изображения</Label>
         <Box display="flex" flexWrap="wrap" gap="20px">
           {images.length === 0 && <div>Изображений нет</div>}
           {images.map((img, idx) => (
@@ -444,7 +505,7 @@ const CatalogEdit = (props) => {
 
       {/* Add new images */}
       <Box mb="md" width="50%">
-        <Label>Добавить новые изображения</Label>
+        <Label>Добавить новые основные изображения</Label>
         <Input
           type="file"
           accept="image/*"
@@ -458,6 +519,126 @@ const CatalogEdit = (props) => {
                 key={idx}
                 src={URL.createObjectURL(file)}
                 alt={`new-img-${idx}`}
+                style={{
+                  width: 80,
+                  height: 60,
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                }}
+              />
+            ))}
+          </Box>
+        )}
+      </Box>
+
+      {/* Other Images */}
+      <Box mb="md" width="60%">
+        <Label>Дополнительные изображения</Label>
+        <Box display="flex" flexWrap="wrap" gap="20px">
+          {otherImages.length === 0 && (
+            <div>Дополнительных изображений нет</div>
+          )}
+          {otherImages.map((img, idx) => (
+            <Box
+              key={idx}
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: "6px",
+                padding: "10px",
+                position: "relative",
+                width: 140,
+                textAlign: "center",
+              }}
+            >
+              <img
+                src={
+                  updatedOtherImages[idx]
+                    ? URL.createObjectURL(updatedOtherImages[idx])
+                    : img
+                }
+                alt={`other-img-${idx}`}
+                style={{
+                  width: "120px",
+                  height: "90px",
+                  objectFit: "cover",
+                  borderRadius: "6px",
+                }}
+              />
+              <button
+                onClick={() => handleDeleteOtherImage(idx)}
+                style={{
+                  position: "absolute",
+                  top: 5,
+                  right: 5,
+                  backgroundColor: "red",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: 20,
+                  height: 20,
+                  cursor: "pointer",
+                }}
+                title="Удалить изображение"
+              >
+                ×
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  opacity: 0,
+                  width: "120px",
+                  height: "30px",
+                  cursor: "pointer",
+                }}
+                onChange={(e) => {
+                  if (e.target.files.length) {
+                    handleUpdateOtherImageChange(idx, e.target.files[0]);
+                  }
+                }}
+              />
+              <label
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  padding: "5px 10px",
+                  borderRadius: "4px",
+                  fontSize: "12px",
+                  pointerEvents: "none",
+                  userSelect: "none",
+                }}
+              >
+                Обновить
+              </label>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+
+      {/* Add new other images */}
+      <Box mb="md" width="50%">
+        <Label>Добавить новые дополнительные изображения</Label>
+        <Input
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={(e) => handleAddNewOtherImages(e.target.files)}
+        />
+        {newOtherImages.length > 0 && (
+          <Box mt="md" display="flex" flexWrap="wrap" gap="10px">
+            {newOtherImages.map((file, idx) => (
+              <img
+                key={idx}
+                src={URL.createObjectURL(file)}
+                alt={`new-other-img-${idx}`}
                 style={{
                   width: 80,
                   height: 60,

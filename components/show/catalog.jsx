@@ -22,16 +22,21 @@ const CatalogList = () => {
       const res = await axios.get("/api/catalog");
       const data = res.data.data || [];
 
+      const normalizeArray = (field) => {
+        if (Array.isArray(field)) return field;
+        if (typeof field === "string" && field.startsWith("{")) {
+          return field
+            .replace(/[{}]/g, "")
+            .split(",")
+            .map((url) => url.trim().replace(/^"|"$/g, ""));
+        }
+        return [];
+      };
+
       const normalized = data.map((item) => ({
         ...item,
-        images: Array.isArray(item.images)
-          ? item.images
-          : typeof item.images === "string" && item.images.startsWith("{")
-          ? item.images
-              .replace(/[{}]/g, "")
-              .split(",")
-              .map((url) => url.trim().replace(/^"|"$/g, ""))
-          : [],
+        images: normalizeArray(item.images),
+        other_images: normalizeArray(item.other_images),
       }));
 
       setCatalogs(normalized);
@@ -50,10 +55,7 @@ const CatalogList = () => {
     return <Box padding="xl">Загрузка...</Box>;
   }
 
-  // Oddiy chap hujayra style
   const leftCellStyle = { fontWeight: "bold", borderRight: "2px solid #ccc" };
-
-  // Название uchun matnni kesish va maksimal kenglik berish
   const textCellStyle = {
     fontWeight: "bold",
     borderRight: "2px solid #ccc",
@@ -72,6 +74,7 @@ const CatalogList = () => {
             <TableCell style={leftCellStyle}>ID</TableCell>
             <TableCell style={textCellStyle}>Название</TableCell>
             <TableCell style={leftCellStyle}>Изображения</TableCell>
+            <TableCell style={leftCellStyle}>Доп. изображения</TableCell>
             <TableCell style={leftCellStyle}>Дата создания</TableCell>
             <TableCell>Действия</TableCell>
           </TableRow>
@@ -79,7 +82,7 @@ const CatalogList = () => {
         <TableBody>
           {catalogs.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={5} style={{ textAlign: "center" }}>
+              <TableCell colSpan={6} style={{ textAlign: "center" }}>
                 Нет данных
               </TableCell>
             </TableRow>
@@ -90,6 +93,8 @@ const CatalogList = () => {
                 <TableCell style={textCellStyle} title={catalog.name}>
                   {catalog.name}
                 </TableCell>
+
+                {/* Asosiy rasm */}
                 <TableCell style={leftCellStyle}>
                   {catalog.images.length > 0 ? (
                     catalog.images.map((img, idx) => (
@@ -109,6 +114,28 @@ const CatalogList = () => {
                     <span>—</span>
                   )}
                 </TableCell>
+
+                {/* Qo'shimcha rasm */}
+                <TableCell style={leftCellStyle}>
+                  {catalog.other_images.length > 0 ? (
+                    catalog.other_images.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img}
+                        alt={`other-img-${idx}`}
+                        style={{
+                          height: 40,
+                          marginRight: 5,
+                          borderRadius: 4,
+                          objectFit: "cover",
+                        }}
+                      />
+                    ))
+                  ) : (
+                    <span>—</span>
+                  )}
+                </TableCell>
+
                 <TableCell style={leftCellStyle}>
                   {new Date(catalog.createdAt).toLocaleString()}
                 </TableCell>

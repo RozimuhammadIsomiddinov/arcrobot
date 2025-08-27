@@ -120,7 +120,14 @@ const CatalogCreate = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [properties, setProperties] = useState([{ key: "", value: "" }]);
+
+  // images uchun
   const [inputs, setInputs] = useState([{ id: Date.now(), file: null }]);
+
+  // other_images uchun
+  const [otherInputs, setOtherInputs] = useState([
+    { id: Date.now() + 1, file: null },
+  ]);
 
   useEffect(() => {
     addPrimeStyles();
@@ -145,6 +152,13 @@ const CatalogCreate = () => {
     setInputs(newInputs);
   };
 
+  // other_images rasm tanlash
+  const handleOtherFileChange = (index, file) => {
+    const newInputs = [...otherInputs];
+    newInputs[index].file = file;
+    setOtherInputs(newInputs);
+  };
+
   // yangi rasm input qo'shish
   const addInput = () => {
     if (inputs.length >= 10)
@@ -152,9 +166,16 @@ const CatalogCreate = () => {
     setInputs([...inputs, { id: Date.now(), file: null }]);
   };
 
+  const addOtherInput = () => {
+    if (otherInputs.length >= 10)
+      return alert("Максимум можно загрузить 10 изображений!");
+    setOtherInputs([...otherInputs, { id: Date.now(), file: null }]);
+  };
+
   const handleSave = async () => {
-    // Validatsiya:
+    // Validatsiya
     const imagesCount = inputs.filter((i) => i.file).length;
+    const otherImagesCount = otherInputs.filter((i) => i.file).length;
     const validPropertiesCount = properties.filter(
       (p) => p.key && p.key.trim().length > 0
     ).length;
@@ -178,7 +199,6 @@ const CatalogCreate = () => {
       return;
     }
 
-    // Hammasi ok — yuborish
     try {
       const propertyObj = {};
       properties.forEach((p) => {
@@ -193,6 +213,10 @@ const CatalogCreate = () => {
 
       inputs.forEach((input) => {
         if (input.file) formData.append("files", input.file);
+      });
+
+      otherInputs.forEach((input) => {
+        if (input.file) formData.append("other_files", input.file);
       });
 
       await axios.post(
@@ -359,13 +383,49 @@ const CatalogCreate = () => {
               <img
                 src={URL.createObjectURL(input.file)}
                 alt="preview"
-                style={{
-                  width: "80px",
-                  height: "80px",
-                  objectFit: "cover",
-                  borderRadius: "6px",
-                  border: "1px solid #ccc",
-                }}
+                style={styles.preview}
+              />
+            </>
+          ) : (
+            <span style={{ color: "#555" }}>Файл не выбран</span>
+          )}
+        </Box>
+      ))}
+
+      <Button type="button" mt="lg" onClick={addInput} style={styles.addBtn}>
+        ➕ Добавить изображение
+      </Button>
+
+      {/* Other Images */}
+      <Label
+        mb="lg"
+        mt="xl"
+        style={{ fontSize: "20px", fontWeight: "bold", color: "darkblue" }}
+      >
+        Дополнительные изображения (other_images)
+      </Label>
+
+      {otherInputs.map((input, index) => (
+        <Box key={input.id} mb="md" style={styles.fileBox}>
+          <label style={styles.fileLabel}>
+            📂 Выбрать файл
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleOtherFileChange(index, e.target.files[0])}
+              style={{ display: "none" }}
+            />
+          </label>
+
+          {input.file ? (
+            <>
+              <span style={{ fontSize: "14px", fontWeight: "500" }}>
+                {input.file.name}
+              </span>
+              <img
+                src={URL.createObjectURL(input.file)}
+                alt="preview"
+                style={styles.preview}
               />
             </>
           ) : (
@@ -377,10 +437,10 @@ const CatalogCreate = () => {
       <Button
         type="button"
         mt="lg"
-        onClick={addInput}
-        style={{ backgroundColor: "rgba(20, 185, 211, 0.8)", color: "white" }}
+        onClick={addOtherInput}
+        style={styles.addBtn}
       >
-        ➕ Добавить изображение
+        ➕ Добавить дополнительное изображение
       </Button>
 
       <Button
@@ -397,6 +457,37 @@ const CatalogCreate = () => {
       </Button>
     </Box>
   );
+};
+
+const styles = {
+  fileBox: {
+    backgroundColor: "rgba(165, 231, 214, 0.8)",
+    padding: "10px",
+    borderRadius: "8px",
+    display: "flex",
+    alignItems: "center",
+    gap: "15px",
+    width: "70%",
+  },
+  fileLabel: {
+    display: "inline-block",
+    backgroundColor: "#007bff",
+    color: "white",
+    padding: "8px 16px",
+    borderRadius: "6px",
+    cursor: "pointer",
+  },
+  preview: {
+    width: "80px",
+    height: "80px",
+    objectFit: "cover",
+    borderRadius: "6px",
+    border: "1px solid #ccc",
+  },
+  addBtn: {
+    backgroundColor: "rgba(20, 185, 211, 0.8)",
+    color: "white",
+  },
 };
 
 export default CatalogCreate;

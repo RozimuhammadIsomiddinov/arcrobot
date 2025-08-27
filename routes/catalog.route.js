@@ -129,66 +129,95 @@ const router = express.Router();
 
 router.get("/", getAllCatalogCont);
 router.get("/:id", getCatalogByIDCont);
-router.post("/create", upload.array("files", 10), async (req, res) => {
-  try {
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ error: "Hech qanday fayl yuklanmadi" });
-    }
-
-    const imagePaths = req.files.map(
-      (file) => `${process.env.BACKEND_URL}/${file.filename}`
-    );
-
-    let { name, title, description, property, images } = req.body;
-
-    try {
-      property = property ? JSON.parse(property) : {};
-    } catch {
-      property = {};
-    }
-
-    try {
-      images = images ? JSON.parse(images) : [];
-    } catch {
-      images = [];
-    }
-
-    const finalImages = [...images, ...imagePaths];
-
-    const catalog = await Catalog.create({
-      name,
-      title,
-      description,
-      images: finalImages,
-      property,
-    });
-
-    res.json({ success: true, data: catalog });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Xatolik yuz berdi" });
-  }
-});
-router.put(
-  "/update/:id",
+router.post(
+  "/create",
   upload.fields([
-    { name: "updatedImages" }, // eski rasmni yangilash uchun
-    { name: "newImages" }, // yangi rasm qo‘shish uchun
+    { name: "files", maxCount: 10 },
+    { name: "other_files", maxCount: 10 },
   ]),
   async (req, res) => {
     try {
-      // Eski rasm URLlarini frontdan olish
+      if (
+        (!req.files?.files || req.files.files.length === 0) &&
+        (!req.files?.other_files || req.files.other_files.length === 0)
+      ) {
+        return res.status(400).json({ error: "Hech qanday fayl yuklanmadi" });
+      }
+
+      // asosiy images
+      const imagePaths = req.files?.files
+        ? req.files.files.map(
+            (file) => `${process.env.BACKEND_URL}/${file.filename}`
+          )
+        : [];
+
+      // qo'shimcha other_images
+      const otherImagePaths = req.files?.other_files
+        ? req.files.other_files.map(
+            (file) => `${process.env.BACKEND_URL}/${file.filename}`
+          )
+        : [];
+
+      let { name, title, description, property, images, other_images } =
+        req.body;
+
+      try {
+        property = property ? JSON.parse(property) : {};
+      } catch {
+        property = {};
+      }
+
+      try {
+        images = images ? JSON.parse(images) : [];
+      } catch {
+        images = [];
+      }
+
+      try {
+        other_images = other_images ? JSON.parse(other_images) : [];
+      } catch {
+        other_images = [];
+      }
+
+      const finalImages = [...images, ...imagePaths];
+      const finalOtherImages = [...other_images, ...otherImagePaths];
+
+      const catalog = await Catalog.create({
+        name,
+        title,
+        description,
+        images: finalImages,
+        other_images: finalOtherImages,
+        property,
+      });
+
+      res.json({ success: true, data: catalog });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Xatolik yuz berdi" });
+    }
+  }
+);
+router.put(
+  "/update/:id",
+  upload.fields([
+    { name: "updatedImages" }, // eski asosiy rasmni yangilash
+    { name: "newImages" }, // yangi asosiy rasm qo‘shish
+    { name: "updatedOtherImages" }, // eski qo‘shimcha rasmni yangilash
+    { name: "newOtherImages" }, // yangi qo‘shimcha rasm qo‘shish
+  ]),
+  async (req, res) => {
+    try {
+      // ===== Asosiy images =====
       let imagesFromClient = req.body.images ? JSON.parse(req.body.images) : [];
 
-      // updatedImages — eski rasm o‘rniga yangi rasm
       if (req.files?.updatedImages) {
         req.files.updatedImages.forEach((file, idx) => {
           const newUrl = `${process.env.BACKEND_URL}/${file.filename}`;
-          imagesFromClient.splice(idx, 1, newUrl); // shu indexdagi rasmni almashtirish
+          imagesFromClient.splice(idx, 1, newUrl); // index bo‘yicha almashtirish
         });
       }
 
-      // newImages — yangi rasm qo‘shish
       if (req.files?.newImages) {
         const newImageUrls = req.files.newImages.map(
           (file) => `${process.env.BACKEND_URL}/${file.filename}`
@@ -196,14 +225,42 @@ router.put(
         imagesFromClient.push(...newImageUrls);
       }
 
-      // Ma’lumotni yangilash
+      // ===== Qo‘shimcha other_images =====
+      let otherImagesFromClient = req.body.other_images
+        ? JSON.parse(req.body.other_images)
+        : [];
+
+      if (req.files?.updatedOtherImages) {
+        req.files.updatedOtherImages.forEach((file, idx) => {
+          const newUrl = `${process.env.BACKEND_URL}/${file.filename}`;
+          otherImagesFromClient.splice(idx, 1, newUrl); // index bo‘yicha almashtirish
+        });
+      }
+
+      if (req.files?.newOtherImages) {
+        const newOtherImageUrls = req.files.newOtherImages.map(
+          (file) => `${process.env.BACKEND_URL}/${file.filename}`
+        );
+        otherImagesFromClient.push(...newOtherImageUrls);
+      }
+
+      // ===== Property parse =====
+      let property = {};
+      try {
+        property = req.body.property ? JSON.parse(req.body.property) : {};
+      } catch {
+        property = {};
+      }
+
+      // ===== Update DB =====
       const [_, updatedRows] = await Catalog.update(
         {
           name: req.body.name,
           title: req.body.title,
           description: req.body.description,
-          property: JSON.parse(req.body.property || "[]"),
+          property,
           images: imagesFromClient,
+          other_images: otherImagesFromClient,
         },
         {
           where: { id: req.params.id },

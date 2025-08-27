@@ -15,6 +15,23 @@ const CatalogDetails = (props) => {
   const [catalog, setCatalog] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // universal array parser
+  const parseArray = (field) => {
+    if (Array.isArray(field)) return field;
+    if (typeof field === "string") {
+      try {
+        const parsed = JSON.parse(field);
+        if (Array.isArray(parsed)) return parsed;
+      } catch {
+        return field
+          .replace(/[{}]/g, "")
+          .split(",")
+          .map((url) => url.trim().replace(/^"|"$/g, ""));
+      }
+    }
+    return [];
+  };
+
   useEffect(() => {
     if (!id) return;
     const fetchCatalog = async () => {
@@ -22,23 +39,8 @@ const CatalogDetails = (props) => {
         const res = await axios.get(`/api/catalog/${id}`);
         const data = res.data;
 
-        // Universal image parse
-        let images = [];
-        if (Array.isArray(data.images)) {
-          images = data.images;
-        } else if (typeof data.images === "string") {
-          try {
-            const parsed = JSON.parse(data.images);
-            if (Array.isArray(parsed)) {
-              images = parsed;
-            }
-          } catch {
-            images = data.images
-              .replace(/[{}]/g, "")
-              .split(",")
-              .map((url) => url.trim().replace(/^"|"$/g, ""));
-          }
-        }
+        const images = parseArray(data.images);
+        const other_images = parseArray(data.other_images);
 
         // Property parse
         let property = {};
@@ -55,6 +57,7 @@ const CatalogDetails = (props) => {
         setCatalog({
           ...data,
           images,
+          other_images,
           property,
         });
       } catch (err) {
@@ -117,6 +120,45 @@ const CatalogDetails = (props) => {
     );
   };
 
+  const renderImages = (arr, label, clickable = false) => (
+    <div style={cardStyle}>
+      <h2 style={{ marginBottom: 15 }}>{label}</h2>
+      {arr.length > 0 ? (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
+          {arr.map((img, idx) => (
+            <img
+              key={idx}
+              src={img}
+              alt={`${label}-${idx}`}
+              style={{
+                width: "150px",
+                height: "100px",
+                objectFit: "cover",
+                borderRadius: "8px",
+                boxShadow: "0 1px 3px rgba(0,0,0,0.5)",
+                border: "1px solid #333",
+                cursor: clickable ? "pointer" : "default",
+              }}
+              onClick={() => {
+                if (clickable) {
+                  window.location.href = `/admin/pages/about?image_url=${encodeURIComponent(
+                    img
+                  )}&id=${catalog.id}`;
+                }
+              }}
+              onError={(e) => {
+                e.target.src =
+                  "https://via.placeholder.com/150x100?text=No+Image";
+              }}
+            />
+          ))}
+        </div>
+      ) : (
+        <span>—</span>
+      )}
+    </div>
+  );
+
   return (
     <Box
       padding="xl"
@@ -161,41 +203,11 @@ const CatalogDetails = (props) => {
         </Table>
       </div>
 
-      {/* Rasmlar */}
-      <div style={cardStyle}>
-        <h2 style={{ marginBottom: 15 }}> Изображения</h2>
-        {catalog.images.length > 0 ? (
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-            {catalog.images.map((img, idx) => (
-              <img
-                key={idx}
-                src={img}
-                alt={`catalog-img-${idx}`}
-                style={{
-                  width: "150px",
-                  height: "100px",
-                  objectFit: "cover",
-                  borderRadius: "8px",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.5)",
-                  border: "1px solid #333",
-                  cursor: "pointer",
-                }}
-                onClick={() => {
-                  window.location.href = `/admin/pages/about?image_url=${encodeURIComponent(
-                    img
-                  )}&id=${catalog.id}`;
-                }}
-                onError={(e) => {
-                  e.target.src =
-                    "https://via.placeholder.com/150x100?text=No+Image";
-                }}
-              />
-            ))}
-          </div>
-        ) : (
-          <span>—</span>
-        )}
-      </div>
+      {/* Asosiy rasmlar */}
+      {renderImages(catalog.images, "Изображения", true)}
+
+      {/* Qo'shimcha rasmlar */}
+      {renderImages(catalog.other_images, "Дополнительные изображения", false)}
 
       {/* Property */}
       <div style={cardStyle}>
