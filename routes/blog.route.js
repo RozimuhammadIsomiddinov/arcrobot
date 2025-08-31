@@ -129,42 +129,65 @@ const router = express.Router();
 
 router.get("/", selectAllBlogCont);
 router.get("/:id", selectBlogByIDCont);
-router.post("/create", upload.array("files", 10), async (req, res) => {
-  try {
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ error: "Hech qanday fayl yuklanmadi" });
+// upload.fields ishlatamiz
+router.post(
+  "/create",
+  upload.fields([
+    { name: "files", maxCount: 10 }, // blog rasmlari
+    { name: "author_image", maxCount: 1 }, // muallif rasmi
+  ]),
+  async (req, res) => {
+    try {
+      if (!req.files || !req.files["files"]) {
+        return res.status(400).json({ error: "Hech qanday fayl yuklanmadi" });
+      }
+
+      // Blog rasmlarini olish
+      const imagePaths = req.files["files"].map(
+        (file) => `${process.env.BACKEND_URL}/${file.filename}`
+      );
+
+      // Muallif rasmi (agar bo‘lsa)
+      let authorImagePath = null;
+      if (req.files["author_image"] && req.files["author_image"][0]) {
+        authorImagePath = `${process.env.BACKEND_URL}/${req.files["author_image"][0].filename}`;
+      }
+
+      // Yangi blog yaratish
+      const newBlog = await Blog.create({
+        title: req.body.title,
+        subtitles: req.body.subtitles,
+        description: req.body.description,
+        images: imagePaths,
+
+        author_name: req.body.author_name,
+        author_image: authorImagePath, // multer orqali yuklangan fayl
+        author_description: req.body.author_description,
+
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      res.json({
+        success: true,
+        message: "Fayllar va ma'lumotlar saqlandi",
+        data: newBlog,
+      });
+    } catch (error) {
+      console.error("Xatolik:", error);
+      res.status(500).json({ error: "Xatolik yuz berdi" });
     }
-
-    const imagePaths = req.files.map(
-      (file) => `${process.env.BACKEND_URL}/${file.filename}`
-    );
-
-    const newImages = await Blog.create({
-      title: req.body.title,
-      subtitles: req.body.subtitles,
-      description: req.body.description,
-      images: imagePaths,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-
-    res.json({
-      success: true,
-      message: "Fayllar va ma'lumotlar saqlandi",
-      data: newImages,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Xatolik yuz berdi" });
   }
-});
+);
 
 router.put(
   "/update/:id",
   upload.fields([
     { name: "newImages", maxCount: 10 },
     { name: "updatedImages", maxCount: 10 },
+    { name: "author_image", maxCount: 1 }, // 👈 author image qo‘shildi
   ]),
   updateBlogCont
 );
+
 export default router;

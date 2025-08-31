@@ -180,6 +180,38 @@ const BlogList = () => {
                     />
                   </TableCell>
                 </TableRow>
+
+                {/* 🆕 Author ma’lumotlari */}
+                <TableRow>
+                  <TableCell style={leftCellStyle}>Автор</TableCell>
+                  <TableCell>{selectedBlog.author_name || "—"}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell style={leftCellStyle}>Фото автора</TableCell>
+                  <TableCell>
+                    {selectedBlog.author_image ? (
+                      <img
+                        src={selectedBlog.author_image}
+                        alt="author"
+                        style={{
+                          width: 80,
+                          height: 80,
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      "—"
+                    )}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell style={leftCellStyle}>О авторе</TableCell>
+                  <TableCell>
+                    {selectedBlog.author_description || "—"}
+                  </TableCell>
+                </TableRow>
+
                 <TableRow>
                   <TableCell style={leftCellStyle}>Дата создания</TableCell>
                   <TableCell>

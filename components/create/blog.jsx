@@ -45,6 +45,11 @@ const BlogCreate = () => {
   const [inputs, setInputs] = useState([{ id: Date.now(), file: null }]);
   const [uploaded, setUploaded] = useState([]);
 
+  // author fields
+  const [authorName, setAuthorName] = useState("");
+  const [authorDescription, setAuthorDescription] = useState("");
+  const [authorImage, setAuthorImage] = useState(null);
+
   // PrimeReact stillarini komponent yuklanganda qo'shish
   useEffect(() => {
     addPrimeStyles();
@@ -78,6 +83,13 @@ const BlogCreate = () => {
       formData.append("subtitles", subtitles);
       formData.append("description", description);
 
+      // author data
+      formData.append("author_name", authorName);
+      formData.append("author_description", authorDescription);
+      if (authorImage) {
+        formData.append("author_image", authorImage);
+      }
+
       const res = await axios.post(
         `${window.location.origin}/api/blog/create`,
         formData,
@@ -93,12 +105,9 @@ const BlogCreate = () => {
     }
   };
 
-  // Editor uchun toolbar konfiguratsiyasi
-
-  // ✨ Editor uchun headerTemplate
+  // Editor uchun headerTemplate
   const headerTemplate = (
     <span className="ql-formats">
-      {/* Matn stilini sozlash */}
       <select className="ql-font">
         <option selected></option>
         <option value="serif"></option>
@@ -112,13 +121,11 @@ const BlogCreate = () => {
         <option value="huge"></option>
       </select>
 
-      {/* Bold, Italic, Underline va Strike */}
       <button className="ql-bold" aria-label="Bold"></button>
       <button className="ql-italic" aria-label="Italic"></button>
       <button className="ql-underline" aria-label="Underline"></button>
       <button className="ql-strike" aria-label="Strike"></button>
 
-      {/* Heading */}
       <select className="ql-header">
         <option value="1">H1</option>
         <option value="2">H2</option>
@@ -129,11 +136,9 @@ const BlogCreate = () => {
         <option selected>Normal</option>
       </select>
 
-      {/* Ranglar */}
       <select className="ql-color"></select>
       <select className="ql-background"></select>
 
-      {/* Listlar */}
       <button
         className="ql-list"
         value="ordered"
@@ -155,19 +160,15 @@ const BlogCreate = () => {
         aria-label="Increase Indent"
       ></button>
 
-      {/* Align */}
       <select className="ql-align"></select>
 
-      {/* Quote va Code */}
       <button className="ql-blockquote" aria-label="Blockquote"></button>
       <button className="ql-code-block" aria-label="Code Block"></button>
 
-      {/* Link, Image, Video */}
       <button className="ql-link" aria-label="Link"></button>
       <button className="ql-image" aria-label="Image"></button>
       <button className="ql-video" aria-label="Video"></button>
 
-      {/* Tozalash */}
       <button className="ql-clean" aria-label="Remove Formatting"></button>
     </span>
   );
@@ -207,7 +208,6 @@ const BlogCreate = () => {
       </Box>
 
       {/* Description - PrimeReact Editor */}
-
       <Box
         mb="md"
         width="50%"
@@ -232,6 +232,95 @@ const BlogCreate = () => {
             style={{ height: "320px", color: "white" }}
           />
         </div>
+      </Box>
+
+      {/* Author Name */}
+      <Box mb="md" width="50%">
+        <Label>Имя Автора</Label>
+        <Input
+          value={authorName}
+          width="100%"
+          onChange={(e) => setAuthorName(e.target.value)}
+          placeholder="Введите имя автора"
+        />
+      </Box>
+
+      {/* Author Description */}
+      <Box mb="md" width="50%">
+        <Label>Описание Автора</Label>
+        <textarea
+          value={authorDescription}
+          style={{
+            width: "100%",
+            padding: "1rem",
+            border: "1px solid #d9d9d9",
+            borderRadius: "4px",
+            fontSize: "14px",
+            fontFamily: "inherit",
+            minHeight: "100px",
+            backgroundColor: "black",
+            color: "white",
+          }}
+          onChange={(e) => setAuthorDescription(e.target.value)}
+          placeholder="Введите описание автора"
+        />
+      </Box>
+      {/* Author Image Upload */}
+      <Box
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "12px",
+          width: "60%",
+          margin: "0 auto",
+        }}
+      >
+        <input
+          id="author-image"
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={(e) => setAuthorImage(e.target.files[0])}
+        />
+
+        <Label
+          htmlFor="author-image"
+          style={{
+            backgroundColor: "#007bff",
+            color: "white",
+            padding: "10px 18px",
+            borderRadius: "8px",
+            cursor: "pointer",
+            fontSize: "15px",
+            fontWeight: "600",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            transition: "all 0.2s ease-in-out",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "#0056b3")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "#007bff")
+          }
+        >
+          📷 Фото Автора
+        </Label>
+
+        {authorImage && (
+          <img
+            src={URL.createObjectURL(authorImage)}
+            alt="author-preview"
+            style={{
+              width: "120px",
+              height: "120px",
+              objectFit: "cover",
+              borderRadius: "50%",
+              border: "3px solid #007bff",
+              boxShadow: "0 4px 10px rgba(0,0,0,0.15)",
+            }}
+          />
+        )}
       </Box>
 
       {/* Images Upload */}
@@ -339,6 +428,7 @@ const BlogCreate = () => {
           backgroundColor: "#0d6efd",
           padding: "12px 24px",
           fontSize: "16px",
+          color: "white",
         }}
       >
         🚀 Сохранить

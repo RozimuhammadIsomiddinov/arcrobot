@@ -120,10 +120,14 @@ const BlogEditImages = (props) => {
   const [title, setTitle] = useState("");
   const [subtitles, setSubtitles] = useState("");
   const [description, setDescription] = useState("");
+  const [authorName, setAuthorName] = useState("");
+  const [authorDescription, setAuthorDescription] = useState("");
 
   const [images, setImages] = useState([]);
   const [updatedImages, setUpdatedImages] = useState({});
   const [newImages, setNewImages] = useState([]);
+  const [authorImage, setAuthorImage] = useState(null);
+  const [newAuthorImage, setNewAuthorImage] = useState(null);
 
   const [error, setError] = useState(null);
 
@@ -141,6 +145,9 @@ const BlogEditImages = (props) => {
         setTitle(data.title || "");
         setSubtitles(data.subtitles || "");
         setDescription(data.description || "");
+        setAuthorName(data.author_name || "");
+        setAuthorDescription(data.author_description || "");
+        setAuthorImage(data.author_image || null);
         setImages(Array.isArray(data.images) ? data.images : []);
       } catch (err) {
         setError("Ошибка при получении данных");
@@ -174,6 +181,17 @@ const BlogEditImages = (props) => {
     });
   };
 
+  const handleAuthorImageChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setNewAuthorImage(e.target.files[0]);
+    }
+  };
+
+  const handleRemoveAuthorImage = () => {
+    setAuthorImage(null);
+    setNewAuthorImage(null);
+  };
+
   const handleSave = async () => {
     try {
       const formData = new FormData();
@@ -181,6 +199,8 @@ const BlogEditImages = (props) => {
       formData.append("title", title);
       formData.append("subtitles", subtitles);
       formData.append("description", description);
+      formData.append("author_name", authorName);
+      formData.append("author_description", authorDescription);
 
       // O'chirilmagan eski rasm URL-larini JSON sifatida yuboramiz
       formData.append("images", JSON.stringify(images));
@@ -195,6 +215,12 @@ const BlogEditImages = (props) => {
         formData.append("newImages", file);
       });
 
+      if (newAuthorImage) {
+        formData.append("author_image", newAuthorImage);
+      } else if (authorImage) {
+        // Agar yangi rasm tanlanmagan, lekin mavjud rasm bo'lsa
+        formData.append("author_old_image", JSON.stringify(authorImage));
+      }
       await axios.put(`/api/blog/update/${recordId}`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
@@ -268,6 +294,155 @@ const BlogEditImages = (props) => {
           headerTemplate={headerTemplate}
           style={{ height: "300px" }}
         />
+      </Box>
+
+      {/* Author Section */}
+      <Box
+        mb="md"
+        width="70%"
+        style={{
+          backgroundColor: "rgba(104, 144, 156, 0.1)",
+          padding: "20px",
+          borderRadius: "8px",
+          color: "white",
+        }}
+      >
+        <Label
+          variant="primary"
+          style={{ fontSize: "18px", marginBottom: "15px" }}
+        >
+          Автор
+        </Label>
+
+        {/* Author Name */}
+        <Box mb="md" width="100%">
+          <Label>Имя автора</Label>
+          <Input
+            value={authorName}
+            onChange={(e) => setAuthorName(e.target.value)}
+            placeholder="Введите имя автора"
+            width="100%"
+          />
+        </Box>
+
+        {/* Author Description */}
+        <Box mb="md" width="100%">
+          <Label>Описание автора</Label>
+          <textarea
+            style={{
+              width: "100%",
+              padding: "1rem",
+              border: "1px solid #d9d9d9",
+              borderRadius: "4px",
+              fontSize: "14px",
+              fontFamily: "inherit",
+              minHeight: "100px",
+              backgroundColor: "black",
+              color: "white",
+            }}
+            value={authorDescription}
+            onChange={(e) => setAuthorDescription(e.target.value)}
+            placeholder="Введите описание автора"
+            width="100%"
+          />
+        </Box>
+
+        {/* Author Image - Boshqa rasmlarga o'xshash tarzda */}
+        <Box mb="md" width="100%">
+          <Label>Фото автора</Label>
+          <Box display="flex" flexWrap="wrap" gap="20px">
+            <Box
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: "6px",
+                padding: "10px",
+                position: "relative",
+                width: 140,
+                textAlign: "center",
+              }}
+            >
+              {authorImage || newAuthorImage ? (
+                <>
+                  <img
+                    src={
+                      newAuthorImage
+                        ? URL.createObjectURL(newAuthorImage)
+                        : authorImage
+                    }
+                    alt="author"
+                    style={{
+                      width: "120px",
+                      height: "90px",
+                      objectFit: "cover",
+                      borderRadius: "6px",
+                    }}
+                  />
+                  <button
+                    onClick={handleRemoveAuthorImage}
+                    style={{
+                      position: "absolute",
+                      top: 5,
+                      right: 5,
+                      backgroundColor: "red",
+                      color: "white",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: 20,
+                      height: 20,
+                      cursor: "pointer",
+                    }}
+                    title="Удалить изображение"
+                  >
+                    ×
+                  </button>
+                </>
+              ) : (
+                <div
+                  style={{
+                    height: "90px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  Нет фото
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  opacity: 0,
+                  width: "120px",
+                  height: "30px",
+                  cursor: "pointer",
+                }}
+                onChange={handleAuthorImageChange}
+              />
+              <label
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  padding: "5px 10px",
+                  borderRadius: "4px",
+                  fontSize: "12px",
+                  pointerEvents: "none",
+                  userSelect: "none",
+                }}
+              >
+                {authorImage || newAuthorImage ? "Обновить" : "Загрузить"}
+              </label>
+            </Box>
+          </Box>
+        </Box>
       </Box>
 
       {/* Images */}

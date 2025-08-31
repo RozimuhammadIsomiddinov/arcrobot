@@ -24,19 +24,25 @@ const selectBlogByIDCont = async (req, res) => {
 };
 const updateBlogCont = async (req, res) => {
   const { id } = req.params;
-  const { title, subtitles, description, images: imagesJSON } = req.body;
+  const {
+    title,
+    subtitles,
+    description,
+    images: imagesJSON,
+    author_name, // authorName -> author_name
+    author_description, // authorDescription -> author_description
+    author_old_image,
+  } = req.body;
 
   const existingBlog = await selectBlogID(id);
   if (!existingBlog) {
     return res.status(404).json({ message: "Blog not found" });
   }
 
+  // 🖼 Images update logic
   let images = existingBlog.images || [];
-
-  // Frontenddan o'chirilmagan eski rasm URLlari JSON ko'rinishida keladi
   const imagesFromClient = imagesJSON ? JSON.parse(imagesJSON) : [];
 
-  // Yangilangan rasm fayllarini eski URLlar bilan almashtirish
   if (req.files?.updatedImages) {
     req.files.updatedImages.forEach((file, idx) => {
       const newUrl = `${process.env.BACKEND_URL}/${file.filename}`;
@@ -44,7 +50,6 @@ const updateBlogCont = async (req, res) => {
     });
   }
 
-  // Yangi rasm fayllarini massivga qo'shish
   if (req.files?.newImages) {
     const newImagesUrls = req.files.newImages.map(
       (file) => `${process.env.BACKEND_URL}/${file.filename}`
@@ -52,14 +57,38 @@ const updateBlogCont = async (req, res) => {
     imagesFromClient.push(...newImagesUrls);
   }
 
-  // Yangilangan images massivini tayyorlash
   images = imagesFromClient;
 
+  // 👤 Author update logic
+  let authorNameFinal = author_name || existingBlog.author_name || "";
+  let authorDescriptionFinal =
+    author_description || existingBlog.author_description || "";
+
+  let authorImage = existingBlog.author_image || "";
+
+  // 1️⃣ Agar yangi fayl kelsa → uni ishlatamiz
+  if (req.files?.author_image && req.files.author_image.length > 0) {
+    authorImage = `${process.env.BACKEND_URL}/${req.files.author_image[0].filename}`;
+  }
+  // 2️⃣ Agar `author_old_image` kelgan bo'lsa → uni ishlatamiz
+  else if (author_old_image) {
+    try {
+      authorImage = JSON.parse(author_old_image);
+    } catch {
+      authorImage = author_old_image;
+    }
+  }
+  // 3️⃣ Agar ikkalasi ham bo'lmasa → DB'dagi mavjud saqlanib qoladi
+
+  // ✅ Oxirgi updateData
   const updateData = {
     title,
     subtitles,
     description,
     images,
+    author_name: authorNameFinal,
+    author_description: authorDescriptionFinal,
+    author_image: authorImage,
   };
 
   try {
