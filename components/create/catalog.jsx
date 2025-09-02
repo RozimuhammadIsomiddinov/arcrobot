@@ -337,8 +337,54 @@ const CatalogCreate = () => {
         </Button>
       </Box>
 
+      {/* Other Images */}
+      <Label
+        mb="lg"
+        style={{ fontSize: "20px", fontWeight: "bold", color: "white" }}
+      >
+        Дополнительные изображения ( MARKER )
+      </Label>
+
+      {otherInputs.map((input, index) => (
+        <Box key={input.id} mb="md" style={styles.fileBox}>
+          <label style={styles.fileLabel}>
+            📂 Выбрать файл
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleOtherFileChange(index, e.target.files[0])}
+              style={{ display: "none" }}
+            />
+          </label>
+
+          {input.file ? (
+            <>
+              <span style={{ fontSize: "14px", fontWeight: "500" }}>
+                {input.file.name}
+              </span>
+              <img
+                src={URL.createObjectURL(input.file)}
+                alt="preview"
+                style={styles.preview}
+              />
+            </>
+          ) : (
+            <span style={{ color: "#555" }}>Файл не выбран</span>
+          )}
+        </Box>
+      ))}
+
+      <Button
+        type="button"
+        mt="lg"
+        onClick={addOtherInput}
+        style={styles.addBtn}
+      >
+        ➕ Добавить дополнительное изображение
+      </Button>
+
       {/* Images */}
-      <Label mb="lg" style={{ fontSize: "20px", fontWeight: "bold" }}>
+      <Label mb="lg" mt="xl" style={{ fontSize: "20px", fontWeight: "bold" }}>
         Изображения (максимум 10)
       </Label>
 
@@ -394,53 +440,6 @@ const CatalogCreate = () => {
 
       <Button type="button" mt="lg" onClick={addInput} style={styles.addBtn}>
         ➕ Добавить изображение
-      </Button>
-
-      {/* Other Images */}
-      <Label
-        mb="lg"
-        mt="xl"
-        style={{ fontSize: "20px", fontWeight: "bold", color: "darkblue" }}
-      >
-        Дополнительные изображения (other_images)
-      </Label>
-
-      {otherInputs.map((input, index) => (
-        <Box key={input.id} mb="md" style={styles.fileBox}>
-          <label style={styles.fileLabel}>
-            📂 Выбрать файл
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => handleOtherFileChange(index, e.target.files[0])}
-              style={{ display: "none" }}
-            />
-          </label>
-
-          {input.file ? (
-            <>
-              <span style={{ fontSize: "14px", fontWeight: "500" }}>
-                {input.file.name}
-              </span>
-              <img
-                src={URL.createObjectURL(input.file)}
-                alt="preview"
-                style={styles.preview}
-              />
-            </>
-          ) : (
-            <span style={{ color: "#555" }}>Файл не выбран</span>
-          )}
-        </Box>
-      ))}
-
-      <Button
-        type="button"
-        mt="lg"
-        onClick={addOtherInput}
-        style={styles.addBtn}
-      >
-        ➕ Добавить дополнительное изображение
       </Button>
 
       <Button

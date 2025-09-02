@@ -413,127 +413,9 @@ const CatalogEdit = (props) => {
         />
       </Box>
 
-      {/* Images */}
-      <Box mb="md" width="60%">
-        <Label>Основные изображения</Label>
-        <Box display="flex" flexWrap="wrap" gap="20px">
-          {images.length === 0 && <div>Изображений нет</div>}
-          {images.map((img, idx) => (
-            <Box
-              key={idx}
-              style={{
-                border: "1px solid #ccc",
-                borderRadius: "6px",
-                padding: "10px",
-                position: "relative",
-                width: 140,
-                textAlign: "center",
-              }}
-            >
-              <img
-                src={
-                  updatedImages[idx]
-                    ? URL.createObjectURL(updatedImages[idx])
-                    : img
-                }
-                alt={`img-${idx}`}
-                style={{
-                  width: "120px",
-                  height: "90px",
-                  objectFit: "cover",
-                  borderRadius: "6px",
-                }}
-              />
-              <button
-                onClick={() => handleDeleteImage(idx)}
-                style={{
-                  position: "absolute",
-                  top: 5,
-                  right: 5,
-                  backgroundColor: "red",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: 20,
-                  height: 20,
-                  cursor: "pointer",
-                }}
-                title="Удалить изображение"
-              >
-                ×
-              </button>
-              <input
-                type="file"
-                accept="image/*"
-                style={{
-                  position: "absolute",
-                  bottom: "10px",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  opacity: 0,
-                  width: "120px",
-                  height: "30px",
-                  cursor: "pointer",
-                }}
-                onChange={(e) => {
-                  if (e.target.files.length) {
-                    handleUpdateImageChange(idx, e.target.files[0]);
-                  }
-                }}
-              />
-              <label
-                style={{
-                  position: "absolute",
-                  bottom: "10px",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  backgroundColor: "#007bff",
-                  color: "white",
-                  padding: "5px 10px",
-                  borderRadius: "4px",
-                  fontSize: "12px",
-                  pointerEvents: "none",
-                  userSelect: "none",
-                }}
-              >
-                Обновить
-              </label>
-            </Box>
-          ))}
-        </Box>
-      </Box>
-
-      {/* Add new images */}
-      <Box mb="md" width="50%">
-        <Label>Добавить новые основные изображения</Label>
-        <Input
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={(e) => handleAddNewImages(e.target.files)}
-        />
-        {newImages.length > 0 && (
-          <Box mt="md" display="flex" flexWrap="wrap" gap="10px">
-            {newImages.map((file, idx) => (
-              <img
-                key={idx}
-                src={URL.createObjectURL(file)}
-                alt={`new-img-${idx}`}
-                style={{
-                  width: 80,
-                  height: 60,
-                  objectFit: "cover",
-                  borderRadius: "4px",
-                }}
-              />
-            ))}
-          </Box>
-        )}
-      </Box>
-
       {/* Other Images */}
       <Box mb="md" width="60%">
-        <Label>Дополнительные изображения</Label>
+        <h1>Дополнительные изображения (MARKER)</h1>
         <Box display="flex" flexWrap="wrap" gap="20px">
           {otherImages.length === 0 && (
             <div>Дополнительных изображений нет</div>
@@ -624,9 +506,10 @@ const CatalogEdit = (props) => {
       </Box>
 
       {/* Add new other images */}
-      <Box mb="md" width="50%">
-        <Label>Добавить новые дополнительные изображения</Label>
+      <Box mb="md" mt="xl" width="50%">
+        <h1>Добавить новые дополнительные изображения (MARKER)</h1>
         <Input
+          mt="xl"
           type="file"
           accept="image/*"
           multiple
@@ -650,9 +533,126 @@ const CatalogEdit = (props) => {
           </Box>
         )}
       </Box>
+      {/* Images */}
+      <Box mb="md" mt="xl" width="60%">
+        <h1>Основные изображения</h1>
+        <Box display="flex" mt="xl" flexWrap="wrap" gap="20px">
+          {images.length === 0 && <div>Изображений нет</div>}
+          {images.map((img, idx) => (
+            <Box
+              key={idx}
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: "6px",
+                padding: "10px",
+                position: "relative",
+                width: 140,
+                textAlign: "center",
+              }}
+            >
+              <img
+                src={
+                  updatedImages[idx]
+                    ? URL.createObjectURL(updatedImages[idx])
+                    : img
+                }
+                alt={`img-${idx}`}
+                style={{
+                  width: "120px",
+                  height: "90px",
+                  objectFit: "cover",
+                  borderRadius: "6px",
+                }}
+              />
+              <button
+                onClick={() => handleDeleteImage(idx)}
+                style={{
+                  position: "absolute",
+                  top: 5,
+                  right: 5,
+                  backgroundColor: "red",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: 20,
+                  height: 20,
+                  cursor: "pointer",
+                }}
+                title="Удалить изображение"
+              >
+                ×
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  opacity: 0,
+                  width: "120px",
+                  height: "30px",
+                  cursor: "pointer",
+                }}
+                onChange={(e) => {
+                  if (e.target.files.length) {
+                    handleUpdateImageChange(idx, e.target.files[0]);
+                  }
+                }}
+              />
+              <label
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  padding: "5px 10px",
+                  borderRadius: "4px",
+                  fontSize: "12px",
+                  pointerEvents: "none",
+                  userSelect: "none",
+                }}
+              >
+                Обновить
+              </label>
+            </Box>
+          ))}
+        </Box>
+      </Box>
 
+      {/* Add new images */}
+      <Box mb="md" mt="xl" width="50%">
+        <Label>Добавить новые основные изображения</Label>
+        <Input
+          type="file"
+          mt="xl"
+          accept="image/*"
+          multiple
+          onChange={(e) => handleAddNewImages(e.target.files)}
+        />
+        {newImages.length > 0 && (
+          <Box mt="md" display="flex" flexWrap="wrap" gap="10px">
+            {newImages.map((file, idx) => (
+              <img
+                key={idx}
+                src={URL.createObjectURL(file)}
+                alt={`new-img-${idx}`}
+                style={{
+                  width: 80,
+                  height: 60,
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                }}
+              />
+            ))}
+          </Box>
+        )}
+      </Box>
       {/* Properties */}
-      <Box mb="md" width="60%">
+      <Box mb="md" mt="xl" width="60%">
         <Label>Свойства</Label>
         {properties.map((prop, idx) => (
           <Box key={idx} display="flex" alignItems="center" mb="sm" gap="10px">
