@@ -31,3 +31,9 @@ import editCatalog from '../components/edit/catalog'
 AdminJS.UserComponents.editCatalog = editCatalog
 import aboutPage from '../components/About'
 AdminJS.UserComponents.aboutPage = aboutPage
+import workerCreate from '../components/create/worker'
+AdminJS.UserComponents.workerCreate = workerCreate
+import workerEdit from '../components/edit/worker'
+AdminJS.UserComponents.workerEdit = workerEdit
+import workerlist from '../components/show/worker'
+AdminJS.UserComponents.workerlist = workerlist

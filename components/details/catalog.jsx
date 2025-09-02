@@ -204,10 +204,10 @@ const CatalogDetails = (props) => {
       </div>
 
       {/* Asosiy rasmlar */}
-      {renderImages(catalog.images, "Изображения", true)}
+      {renderImages(catalog.images, "Изображения", false)}
 
       {/* Qo'shimcha rasmlar */}
-      {renderImages(catalog.other_images, "Дополнительные изображения", false)}
+      {renderImages(catalog.other_images, "Дополнительные изображения", true)}
 
       {/* Property */}
       <div style={cardStyle}>
