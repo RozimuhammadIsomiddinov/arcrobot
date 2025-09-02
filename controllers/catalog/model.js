@@ -52,7 +52,7 @@ const getCatalogByID = async (id) => {
   const imagesWithPositions = await Promise.all(
     imagesArray.map(async (imgUrl) => {
       const positions = await ImagePosition.findAll({
-        where: { image_url: imgUrl },
+        where: { image: imgUrl },
       });
       return {
         image_url: imgUrl,
