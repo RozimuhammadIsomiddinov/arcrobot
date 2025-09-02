@@ -413,126 +413,6 @@ const CatalogEdit = (props) => {
         />
       </Box>
 
-      {/* Other Images */}
-      <Box mb="md" width="60%">
-        <h1>Дополнительные изображения (MARKER)</h1>
-        <Box display="flex" flexWrap="wrap" gap="20px">
-          {otherImages.length === 0 && (
-            <div>Дополнительных изображений нет</div>
-          )}
-          {otherImages.map((img, idx) => (
-            <Box
-              key={idx}
-              style={{
-                border: "1px solid #ccc",
-                borderRadius: "6px",
-                padding: "10px",
-                position: "relative",
-                width: 140,
-                textAlign: "center",
-              }}
-            >
-              <img
-                src={
-                  updatedOtherImages[idx]
-                    ? URL.createObjectURL(updatedOtherImages[idx])
-                    : img
-                }
-                alt={`other-img-${idx}`}
-                style={{
-                  width: "120px",
-                  height: "90px",
-                  objectFit: "cover",
-                  borderRadius: "6px",
-                }}
-              />
-              <button
-                onClick={() => handleDeleteOtherImage(idx)}
-                style={{
-                  position: "absolute",
-                  top: 5,
-                  right: 5,
-                  backgroundColor: "red",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "50%",
-                  width: 20,
-                  height: 20,
-                  cursor: "pointer",
-                }}
-                title="Удалить изображение"
-              >
-                ×
-              </button>
-              <input
-                type="file"
-                accept="image/*"
-                style={{
-                  position: "absolute",
-                  bottom: "10px",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  opacity: 0,
-                  width: "120px",
-                  height: "30px",
-                  cursor: "pointer",
-                }}
-                onChange={(e) => {
-                  if (e.target.files.length) {
-                    handleUpdateOtherImageChange(idx, e.target.files[0]);
-                  }
-                }}
-              />
-              <label
-                style={{
-                  position: "absolute",
-                  bottom: "10px",
-                  left: "50%",
-                  transform: "translateX(-50%)",
-                  backgroundColor: "#007bff",
-                  color: "white",
-                  padding: "5px 10px",
-                  borderRadius: "4px",
-                  fontSize: "12px",
-                  pointerEvents: "none",
-                  userSelect: "none",
-                }}
-              >
-                Обновить
-              </label>
-            </Box>
-          ))}
-        </Box>
-      </Box>
-
-      {/* Add new other images */}
-      <Box mb="md" mt="xl" width="50%">
-        <h1>Добавить новые дополнительные изображения (MARKER)</h1>
-        <Input
-          mt="xl"
-          type="file"
-          accept="image/*"
-          multiple
-          onChange={(e) => handleAddNewOtherImages(e.target.files)}
-        />
-        {newOtherImages.length > 0 && (
-          <Box mt="md" display="flex" flexWrap="wrap" gap="10px">
-            {newOtherImages.map((file, idx) => (
-              <img
-                key={idx}
-                src={URL.createObjectURL(file)}
-                alt={`new-other-img-${idx}`}
-                style={{
-                  width: 80,
-                  height: 60,
-                  objectFit: "cover",
-                  borderRadius: "4px",
-                }}
-              />
-            ))}
-          </Box>
-        )}
-      </Box>
       {/* Images */}
       <Box mb="md" mt="xl" width="60%">
         <h1>Основные изображения</h1>
@@ -640,6 +520,127 @@ const CatalogEdit = (props) => {
                 key={idx}
                 src={URL.createObjectURL(file)}
                 alt={`new-img-${idx}`}
+                style={{
+                  width: 80,
+                  height: 60,
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                }}
+              />
+            ))}
+          </Box>
+        )}
+      </Box>
+
+      {/* Other Images */}
+      <Box mb="md" mt="xl" width="60%">
+        <h1>Дополнительные изображения (MARKER)</h1>
+        <Box display="flex" flexWrap="wrap" gap="20px">
+          {otherImages.length === 0 && (
+            <div>Дополнительных изображений нет</div>
+          )}
+          {otherImages.map((img, idx) => (
+            <Box
+              key={idx}
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: "6px",
+                padding: "10px",
+                position: "relative",
+                width: 140,
+                textAlign: "center",
+              }}
+            >
+              <img
+                src={
+                  updatedOtherImages[idx]
+                    ? URL.createObjectURL(updatedOtherImages[idx])
+                    : img
+                }
+                alt={`other-img-${idx}`}
+                style={{
+                  width: "120px",
+                  height: "90px",
+                  objectFit: "cover",
+                  borderRadius: "6px",
+                }}
+              />
+              <button
+                onClick={() => handleDeleteOtherImage(idx)}
+                style={{
+                  position: "absolute",
+                  top: 5,
+                  right: 5,
+                  backgroundColor: "red",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "50%",
+                  width: 20,
+                  height: 20,
+                  cursor: "pointer",
+                }}
+                title="Удалить изображение"
+              >
+                ×
+              </button>
+              <input
+                type="file"
+                accept="image/*"
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  opacity: 0,
+                  width: "120px",
+                  height: "30px",
+                  cursor: "pointer",
+                }}
+                onChange={(e) => {
+                  if (e.target.files.length) {
+                    handleUpdateOtherImageChange(idx, e.target.files[0]);
+                  }
+                }}
+              />
+              <label
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  left: "50%",
+                  transform: "translateX(-50%)",
+                  backgroundColor: "#007bff",
+                  color: "white",
+                  padding: "5px 10px",
+                  borderRadius: "4px",
+                  fontSize: "12px",
+                  pointerEvents: "none",
+                  userSelect: "none",
+                }}
+              >
+                Обновить
+              </label>
+            </Box>
+          ))}
+        </Box>
+      </Box>
+
+      {/* Add new other images */}
+      <Box mb="md" mt="xl" width="50%">
+        <h1>Добавить новые дополнительные изображения (MARKER)</h1>
+        <Input
+          mt="xl"
+          type="file"
+          accept="image/*"
+          multiple
+          onChange={(e) => handleAddNewOtherImages(e.target.files)}
+        />
+        {newOtherImages.length > 0 && (
+          <Box mt="md" display="flex" flexWrap="wrap" gap="10px">
+            {newOtherImages.map((file, idx) => (
+              <img
+                key={idx}
+                src={URL.createObjectURL(file)}
+                alt={`new-other-img-${idx}`}
                 style={{
                   width: 80,
                   height: 60,
