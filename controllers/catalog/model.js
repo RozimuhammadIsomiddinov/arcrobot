@@ -44,15 +44,15 @@ const getCatalogByID = async (id) => {
   let imagesArray = [];
 
   if (Array.isArray(catalog.images)) {
-    imagesArray = catalog.images;
+    imagesArray = catalog.other_images;
   } else if (typeof catalog.images === "string") {
-    imagesArray = parsePgArray(catalog.images);
+    imagesArray = parsePgArray(catalog.other_images);
   }
 
   const imagesWithPositions = await Promise.all(
     imagesArray.map(async (imgUrl) => {
       const positions = await ImagePosition.findAll({
-        where: { image: imgUrl },
+        where: { image_url: imgUrl },
       });
       return {
         image_url: imgUrl,

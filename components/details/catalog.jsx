@@ -207,7 +207,11 @@ const CatalogDetails = (props) => {
       {renderImages(catalog.images, "Изображения", false)}
 
       {/* Qo'shimcha rasmlar */}
-      {renderImages(catalog.other_images, "Дополнительные изображения", true)}
+      {renderImages(
+        catalog.other_images,
+        "Дополнительные изображения (MARKER)",
+        true
+      )}
 
       {/* Property */}
       <div style={cardStyle}>
