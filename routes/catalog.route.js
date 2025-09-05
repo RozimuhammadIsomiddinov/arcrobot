@@ -2,11 +2,16 @@ import express from "express";
 import {
   getAllCatalogCont,
   getCatalogByIDCont,
+  getHomeCatalogsCont,
+  setCatalogHomeCont,
+  unsetCatalogHomeCont,
 } from "../controllers/catalog/catalog.js";
 import upload from "../middleware/multer.js";
 import Catalog from "../models/catalog.js";
 
 const router = express.Router();
+
+router.get("/home", getHomeCatalogsCont); // isHome = true bo'lgan cataloglar
 
 /**
  * @swagger
@@ -279,5 +284,8 @@ router.put(
     }
   }
 );
+
+router.post("/home", setCatalogHomeCont);
+router.delete("/home/:id", unsetCatalogHomeCont);
 
 export default router;

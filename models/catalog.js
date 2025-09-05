@@ -16,6 +16,10 @@ const Catalog = sequelize.define(
     property: DataTypes.JSON,
     description: DataTypes.TEXT,
     other_images: DataTypes.ARRAY(DataTypes.STRING),
+    isHome: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize,

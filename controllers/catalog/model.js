@@ -67,4 +67,65 @@ const getCatalogByID = async (id) => {
   };
 };
 
-export { getAllCatalog, getCatalogByID };
+const setCatalogHome = async (id) => {
+  const catalog = await Catalog.findByPk(id);
+  if (!catalog) return null;
+
+  catalog.isHome = true;
+  await catalog.save();
+
+  return catalog;
+};
+
+const unsetCatalogHome = async (id) => {
+  const catalog = await Catalog.findByPk(id);
+  if (!catalog) return null;
+
+  catalog.isHome = false;
+  await catalog.save();
+
+  return catalog;
+};
+
+const getHomeCatalogs = async () => {
+  const catalogs = await Catalog.findAll({
+    where: { isHome: true },
+    order: [["createdAt", "DESC"]],
+  });
+
+  // Images data bilan birga qaytarish (getCatalogByID dagi kabi)
+  const catalogsWithImages = await Promise.all(
+    catalogs.map(async (catalog) => {
+      let imagesArray = Array.isArray(catalog.images)
+        ? catalog.other_images
+        : [];
+
+      const imagesWithPositions = await Promise.all(
+        imagesArray.map(async (imgUrl) => {
+          const positions = await ImagePosition.findAll({
+            where: { image_url: imgUrl },
+          });
+          return {
+            image_url: imgUrl,
+            positions,
+          };
+        })
+      );
+
+      return {
+        ...catalog.toJSON(),
+        images_data: imagesWithPositions,
+      };
+    })
+  );
+
+  return catalogsWithImages;
+};
+
+export {
+  getAllCatalog,
+  getCatalogByID,
+  setCatalogHome,
+  unsetCatalogHome,
+  getHomeCatalogs,
+};
