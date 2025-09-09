@@ -170,8 +170,6 @@ const CatalogDetails = (props) => {
     >
       <h1 style={{ marginBottom: 20 }}>📄 Детали каталога #{catalog.id}</h1>
 
-      {/* Asosiy ma'lumotlar */}
-      {/* Asosiy ma'lumotlar */}
       <div style={cardStyle}>
         <h2 style={{ marginBottom: 15 }}> Основная информация</h2>
         <Table style={{ color: "#fff" }}>
@@ -182,7 +180,14 @@ const CatalogDetails = (props) => {
               </TableCell>
               <TableCell style={{ color: "#ccc" }}>{catalog.name}</TableCell>
             </TableRow>
-
+            <TableRow>
+              <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
+                Подзаголовок
+              </TableCell>
+              <TableCell style={{ color: "#ccc" }}>
+                {catalog.subtitle ? catalog.subtitle : "—"}
+              </TableCell>
+            </TableRow>
             <TableRow>
               <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
                 Описание
@@ -205,7 +210,7 @@ const CatalogDetails = (props) => {
 
             <TableRow>
               <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
-                Есть скидка?
+                Есть наличными?
               </TableCell>
               <TableCell style={{ color: "#ccc" }}>
                 {catalog.isDiscount ? "✅ Да" : "❌ Нет"}

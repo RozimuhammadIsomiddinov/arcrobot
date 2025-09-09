@@ -12,6 +12,7 @@ const Catalog = sequelize.define(
     },
     name: DataTypes.STRING,
     title: DataTypes.STRING,
+    subtitle: DataTypes.STRING,
     images: DataTypes.ARRAY(DataTypes.STRING),
     property: DataTypes.JSON,
     description: DataTypes.TEXT,
@@ -21,9 +22,8 @@ const Catalog = sequelize.define(
       defaultValue: false,
     },
 
-    // 🔹 Sotuvga oid maydonlar
     price: {
-      type: DataTypes.DECIMAL(10, 2), // masalan: 9999.99
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     isDiscount: {
@@ -31,11 +31,11 @@ const Catalog = sequelize.define(
       defaultValue: false,
     },
     delivery_days: {
-      type: DataTypes.INTEGER, // kunlarda yetkazib berish
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     storage_days: {
-      type: DataTypes.INTEGER, // saqlanish muddati (kun)
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
   },

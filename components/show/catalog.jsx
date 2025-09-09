@@ -115,7 +115,7 @@ const CatalogList = () => {
             checked={showOnlyHome}
             onChange={() => setShowOnlyHome(!showOnlyHome)}
           />{" "}
-          Show Only Home
+          Показать только домашнюю страницу
         </label>
       </Box>
 
@@ -223,7 +223,7 @@ const CatalogList = () => {
                       variant="danger"
                       onClick={() => removeFromHome(catalog.id)}
                     >
-                      Remove Home
+                      Удалить дом
                     </Button>
                   ) : (
                     <>
@@ -239,7 +239,7 @@ const CatalogList = () => {
                           onClick={() => setAsHome(catalog.id)}
                           style={{ marginLeft: 5 }}
                         >
-                          Set Home
+                          Установить домой
                         </Button>
                       )}
                     </>

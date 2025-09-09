@@ -264,7 +264,6 @@ const BlogCreate = () => {
           placeholder="Введите описание автора"
         />
       </Box>
-      // Author Phone
       <Box mb="md" width="50%">
         <Label>Телефон Автора</Label>
         <Input

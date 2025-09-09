@@ -112,6 +112,7 @@ const headerTemplate = (
 const CatalogCreate = () => {
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
   const [description, setDescription] = useState("");
   const [properties, setProperties] = useState([{ key: "", value: "" }]);
 
@@ -279,6 +280,8 @@ const CatalogCreate = () => {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("title", title);
+      formData.append("subtitle", subtitle);
+
       formData.append("description", description || "");
       formData.append("property", JSON.stringify(propertyObj));
 
@@ -374,7 +377,25 @@ const CatalogCreate = () => {
           onChange={(e) => setTitle(e.target.value)}
         />
       </Box>
-
+      {/* Subtitle */}
+      <Box mb="md" width="70%">
+        <Label>Подзаголовок</Label>
+        <textarea
+          value={subtitle}
+          style={{
+            width: "100%",
+            padding: "1rem",
+            border: "1px solid #d9d9d9",
+            borderRadius: "4px",
+            fontSize: "14px",
+            fontFamily: "inherit",
+            minHeight: "80px",
+            backgroundColor: "black",
+            color: "white",
+          }}
+          onChange={(e) => setSubtitle(e.target.value)}
+        />
+      </Box>
       {/* Price & meta */}
       <Box mb="md" width="70%" display="flex" gap="12px" alignItems="center">
         <Box width="30%">
@@ -389,7 +410,7 @@ const CatalogCreate = () => {
         </Box>
 
         <Box width="20%">
-          <Label>Скидка</Label>
+          <Label>наличными</Label>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <input
               id="isDiscount"

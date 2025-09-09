@@ -129,12 +129,11 @@ const router = express.Router();
 
 router.get("/", selectAllBlogCont);
 router.get("/:id", selectBlogByIDCont);
-// upload.fields ishlatamiz
 router.post(
   "/create",
   upload.fields([
-    { name: "files", maxCount: 10 }, // blog rasmlari
-    { name: "author_image", maxCount: 1 }, // muallif rasmi
+    { name: "files", maxCount: 10 },
+    { name: "author_image", maxCount: 1 },
   ]),
   async (req, res) => {
     try {
@@ -142,18 +141,15 @@ router.post(
         return res.status(400).json({ error: "Hech qanday fayl yuklanmadi" });
       }
 
-      // Blog rasmlarini olish
       const imagePaths = req.files["files"].map(
         (file) => `${process.env.BACKEND_URL}/${file.filename}`
       );
 
-      // Muallif rasmi (agar bo‘lsa)
       let authorImagePath = null;
       if (req.files["author_image"] && req.files["author_image"][0]) {
         authorImagePath = `${process.env.BACKEND_URL}/${req.files["author_image"][0].filename}`;
       }
 
-      // Yangi blog yaratish
       const newBlog = await Blog.create({
         title: req.body.title,
         subtitles: req.body.subtitles,
@@ -161,7 +157,7 @@ router.post(
         images: imagePaths,
 
         author_name: req.body.author_name,
-        author_image: authorImagePath, // multer orqali yuklangan fayl
+        author_image: authorImagePath,
         author_description: req.body.author_description,
         author_phone: req.body.author_phone,
 
@@ -186,7 +182,7 @@ router.put(
   upload.fields([
     { name: "newImages", maxCount: 10 },
     { name: "updatedImages", maxCount: 10 },
-    { name: "author_image", maxCount: 1 }, // 👈 author image qo‘shildi
+    { name: "author_image", maxCount: 1 },
   ]),
   updateBlogCont
 );

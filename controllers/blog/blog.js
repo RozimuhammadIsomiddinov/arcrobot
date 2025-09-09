@@ -29,9 +29,10 @@ const updateBlogCont = async (req, res) => {
     subtitles,
     description,
     images: imagesJSON,
-    author_name, // authorName -> author_name
-    author_description, // authorDescription -> author_description
+    author_name,
+    author_description,
     author_old_image,
+    author_phone,
   } = req.body;
 
   const existingBlog = await selectBlogID(id);
@@ -39,7 +40,6 @@ const updateBlogCont = async (req, res) => {
     return res.status(404).json({ message: "Blog not found" });
   }
 
-  // 🖼 Images update logic
   let images = existingBlog.images || [];
   const imagesFromClient = imagesJSON ? JSON.parse(imagesJSON) : [];
 
@@ -59,28 +59,23 @@ const updateBlogCont = async (req, res) => {
 
   images = imagesFromClient;
 
-  // 👤 Author update logic
   let authorNameFinal = author_name || existingBlog.author_name || "";
   let authorDescriptionFinal =
     author_description || existingBlog.author_description || "";
+  let authorPhoneFinal = author_phone || existingBlog.author_phone || "";
 
   let authorImage = existingBlog.author_image || "";
 
-  // 1️⃣ Agar yangi fayl kelsa → uni ishlatamiz
   if (req.files?.author_image && req.files.author_image.length > 0) {
     authorImage = `${process.env.BACKEND_URL}/${req.files.author_image[0].filename}`;
-  }
-  // 2️⃣ Agar `author_old_image` kelgan bo'lsa → uni ishlatamiz
-  else if (author_old_image) {
+  } else if (author_old_image) {
     try {
       authorImage = JSON.parse(author_old_image);
     } catch {
       authorImage = author_old_image;
     }
   }
-  // 3️⃣ Agar ikkalasi ham bo'lmasa → DB'dagi mavjud saqlanib qoladi
 
-  // ✅ Oxirgi updateData
   const updateData = {
     title,
     subtitles,
@@ -89,6 +84,7 @@ const updateBlogCont = async (req, res) => {
     author_name: authorNameFinal,
     author_description: authorDescriptionFinal,
     author_image: authorImage,
+    author_phone: authorPhoneFinal,
   };
 
   try {

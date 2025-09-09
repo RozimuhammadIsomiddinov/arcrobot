@@ -39,7 +39,6 @@ const addPrimeStyles = () => {
 // Editor toolbar
 const headerTemplate = (
   <span className="ql-formats">
-    {/* Matn stilini sozlash */}
     <select className="ql-font">
       <option selected></option>
       <option value="serif"></option>
@@ -53,13 +52,11 @@ const headerTemplate = (
       <option value="huge"></option>
     </select>
 
-    {/* Bold, Italic, Underline va Strike */}
     <button className="ql-bold" aria-label="Bold"></button>
     <button className="ql-italic" aria-label="Italic"></button>
     <button className="ql-underline" aria-label="Underline"></button>
     <button className="ql-strike" aria-label="Strike"></button>
 
-    {/* Heading */}
     <select className="ql-header">
       <option value="1">H1</option>
       <option value="2">H2</option>
@@ -70,11 +67,9 @@ const headerTemplate = (
       <option selected>Normal</option>
     </select>
 
-    {/* Ranglar */}
     <select className="ql-color"></select>
     <select className="ql-background"></select>
 
-    {/* Listlar */}
     <button
       className="ql-list"
       value="ordered"
@@ -96,19 +91,11 @@ const headerTemplate = (
       aria-label="Increase Indent"
     ></button>
 
-    {/* Align */}
     <select className="ql-align"></select>
 
-    {/* Quote va Code */}
     <button className="ql-blockquote" aria-label="Blockquote"></button>
     <button className="ql-code-block" aria-label="Code Block"></button>
 
-    {/* Link, Image, Video */}
-    <button className="ql-link" aria-label="Link"></button>
-    <button className="ql-image" aria-label="Image"></button>
-    <button className="ql-video" aria-label="Video"></button>
-
-    {/* Tozalash */}
     <button className="ql-clean" aria-label="Remove Formatting"></button>
   </span>
 );
@@ -122,6 +109,7 @@ const BlogEditImages = (props) => {
   const [description, setDescription] = useState("");
   const [authorName, setAuthorName] = useState("");
   const [authorDescription, setAuthorDescription] = useState("");
+  const [authorPhone, setAuthorPhone] = useState("");
 
   const [images, setImages] = useState([]);
   const [updatedImages, setUpdatedImages] = useState({});
@@ -147,6 +135,7 @@ const BlogEditImages = (props) => {
         setDescription(data.description || "");
         setAuthorName(data.author_name || "");
         setAuthorDescription(data.author_description || "");
+        setAuthorPhone(data.author_phone || "");
         setAuthorImage(data.author_image || null);
         setImages(Array.isArray(data.images) ? data.images : []);
       } catch (err) {
@@ -201,16 +190,14 @@ const BlogEditImages = (props) => {
       formData.append("description", description);
       formData.append("author_name", authorName);
       formData.append("author_description", authorDescription);
+      formData.append("author_phone", authorPhone);
 
-      // O'chirilmagan eski rasm URL-larini JSON sifatida yuboramiz
       formData.append("images", JSON.stringify(images));
 
-      // updatedImages fayllarini indeks bilan yuboramiz
       Object.entries(updatedImages).forEach(([index, file]) => {
         formData.append(`updatedImages`, file);
       });
 
-      // yangi yuklangan rasmlar
       newImages.forEach((file) => {
         formData.append("newImages", file);
       });
@@ -218,7 +205,6 @@ const BlogEditImages = (props) => {
       if (newAuthorImage) {
         formData.append("author_image", newAuthorImage);
       } else if (authorImage) {
-        // Agar yangi rasm tanlanmagan, lekin mavjud rasm bo'lsa
         formData.append("author_old_image", JSON.stringify(authorImage));
       }
       await axios.put(`/api/blog/update/${recordId}`, formData, {
@@ -347,7 +333,18 @@ const BlogEditImages = (props) => {
           />
         </Box>
 
-        {/* Author Image - Boshqa rasmlarga o'xshash tarzda */}
+        {/* Author Phone */}
+        <Box mb="md" width="100%">
+          <Label>Телефон автора</Label>
+          <Input
+            value={authorPhone}
+            onChange={(e) => setAuthorPhone(e.target.value)}
+            placeholder="Введите телефон автора"
+            width="100%"
+          />
+        </Box>
+
+        {/* Author Image */}
         <Box mb="md" width="100%">
           <Label>Фото автора</Label>
           <Box display="flex" flexWrap="wrap" gap="20px">

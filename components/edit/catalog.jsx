@@ -119,6 +119,7 @@ const CatalogEdit = (props) => {
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
   const [updatedImages, setUpdatedImages] = useState({});
@@ -152,6 +153,7 @@ const CatalogEdit = (props) => {
 
         setName(data.name || "");
         setTitle(data.title || "");
+        setSubtitle(data.subtitle || "");
         setDescription(data.description || "");
         setPrice(data.price || "");
         setIsDiscount(Boolean(data.isDiscount));
@@ -315,6 +317,7 @@ const CatalogEdit = (props) => {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("title", title);
+      formData.append("subtitle", subtitle);
       formData.append("description", description);
       formData.append("price", price);
       formData.append("isDiscount", isDiscount);
@@ -404,6 +407,16 @@ const CatalogEdit = (props) => {
         />
       </Box>
 
+      {/* Subtitle  */}
+      <Box mb="md" width="50%">
+        <Label>Подзаголовок</Label>
+        <Input
+          value={subtitle}
+          onChange={(e) => setSubtitle(e.target.value)}
+          placeholder="Введите подзаголовок"
+          width="100%"
+        />
+      </Box>
       {/* Description */}
       <Box
         mb="md"
@@ -698,8 +711,9 @@ const CatalogEdit = (props) => {
         <Label>Цена (сум)</Label>
         <Input
           type="number"
+          step="1"
           value={price}
-          onChange={(e) => setPrice(e.target.value)}
+          onChange={(e) => setPrice(Math.floor(Number(e.target.value)))}
           placeholder="Введите цену"
           width="100%"
         />
@@ -707,14 +721,14 @@ const CatalogEdit = (props) => {
 
       {/* Is Discount */}
       <Box mb="md" width="50%">
-        <Label>Скидка</Label>
+        <Label>наличными</Label>
         <input
           type="checkbox"
           checked={isDiscount}
           color="white"
           onChange={(e) => setIsDiscount(e.target.checked)}
         />{" "}
-        Есть скидка?
+        <span style={{ color: "white" }}>Есть наличными?</span>
       </Box>
 
       {/* Delivery days */}

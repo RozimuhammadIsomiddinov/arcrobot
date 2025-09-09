@@ -183,12 +183,13 @@ router.post(
       const finalImages = [...images, ...imagePaths];
       const finalOtherImages = [...other_images, ...otherImagePaths];
 
-      // 🔹 Sotuv maydonlari
-      const { price, isDiscount, delivery_days, storage_days } = req.body;
+      const { price, isDiscount, delivery_days, storage_days, subtitle } =
+        req.body;
 
       const catalog = await Catalog.create({
         name,
         title,
+        subtitle,
         description,
         property,
         images: finalImages,
@@ -225,7 +226,6 @@ router.put(
         }
       };
 
-      // ===== Asosiy images =====
       let imagesFromClient = safeParse(req.body.images, []);
 
       if (req.files?.updatedImages) {
@@ -246,7 +246,6 @@ router.put(
         imagesFromClient.push(...newImageUrls);
       }
 
-      // ===== Qo‘shimcha other_images =====
       let otherImagesFromClient = safeParse(req.body.other_images, []);
 
       if (req.files?.updatedOtherImages) {
@@ -267,17 +266,16 @@ router.put(
         otherImagesFromClient.push(...newOtherImageUrls);
       }
 
-      // ===== Property parse =====
       const property = safeParse(req.body.property, {});
 
-      // 🔹 Sotuv maydonlari
-      const { price, isDiscount, delivery_days, storage_days } = req.body;
+      const { price, isDiscount, delivery_days, storage_days, subtitle } =
+        req.body;
 
-      // ===== Update DB =====
       const [affectedCount, updatedRows] = await Catalog.update(
         {
           name: req.body.name,
           title: req.body.title,
+          subtitle: subtitle,
           description: req.body.description,
           property,
           images: imagesFromClient,
