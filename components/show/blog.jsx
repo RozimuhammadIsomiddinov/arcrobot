@@ -70,7 +70,6 @@ const BlogList = () => {
           <TableRow>
             <TableCell style={leftCellStyle}>ID</TableCell>
             <TableCell style={leftCellStyle}>Заголовок</TableCell>
-            <TableCell style={leftCellStyle}>Подзаголовок</TableCell>
             <TableCell style={leftCellStyle}>Телефон Автора</TableCell>
             <TableCell style={leftCellStyle}>Изображения</TableCell>
             <TableCell style={leftCellStyle}>Дата создания</TableCell>
@@ -89,7 +88,6 @@ const BlogList = () => {
               <TableRow key={blog.id}>
                 <TableCell style={leftCellStyle}>{blog.id}</TableCell>
                 <TableCell style={leftCellStyle}>{blog.title}</TableCell>
-                <TableCell style={leftCellStyle}>{blog.subtitles}</TableCell>
                 <TableCell style={leftCellStyle}>{blog.author_phone}</TableCell>
                 <TableCell style={leftCellStyle}>
                   {Array.isArray(blog.images) ? (
