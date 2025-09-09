@@ -1,53 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Box, Label, Input, Button } from "@adminjs/design-system";
 import axios from "axios";
-import { Editor } from "primereact/editor";
 
-// PrimeReact CSS dinamik ulash
-const addPrimeStyles = () => {
-  const themeUrl =
-    "https://cdn.jsdelivr.net/npm/primereact@9.6.0/resources/themes/lara-light-blue/theme.css";
-  const coreUrl =
-    "https://cdn.jsdelivr.net/npm/primereact@9.6.0/resources/primereact.min.css";
-  const iconsUrl =
-    "https://cdn.jsdelivr.net/npm/primeicons@6.0.1/primeicons.css";
-
-  const existing = Array.from(document.head.querySelectorAll("link")).map(
-    (l) => l.href
-  );
-
-  if (!existing.includes(themeUrl)) {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = themeUrl;
-    document.head.appendChild(link);
-  }
-  if (!existing.includes(coreUrl)) {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = coreUrl;
-    document.head.appendChild(link);
-  }
-  if (!existing.includes(iconsUrl)) {
-    const link = document.createElement("link");
-    link.rel = "stylesheet";
-    link.href = iconsUrl;
-    document.head.appendChild(link);
-  }
-};
-
-// Editor toolbar
-const headerTemplate = (
-  <span className="ql-formats">
-    <button className="ql-bold"></button>
-    <button className="ql-italic"></button>
-    <button className="ql-underline"></button>
-    <button className="ql-list" value="ordered"></button>
-    <button className="ql-list" value="bullet"></button>
-    <button className="ql-link"></button>
-    <button className="ql-clean"></button>
-  </span>
-);
+// PrimeReact CSS ulash funksiyasi kerak emas, olib tashladim
 
 const WorkerEdit = (props) => {
   const recordId = props.record?.id;
@@ -55,7 +10,7 @@ const WorkerEdit = (props) => {
   const [loading, setLoading] = useState(true);
   const [name, setName] = useState("");
   const [workerType, setWorkerType] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(""); // telefon raqam sifatida ishlatiladi
 
   const [image, setImage] = useState(null);
   const [newImage, setNewImage] = useState(null);
@@ -63,8 +18,6 @@ const WorkerEdit = (props) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    addPrimeStyles();
-
     if (!recordId) {
       setError("ID mavjud emas");
       setLoading(false);
@@ -78,7 +31,7 @@ const WorkerEdit = (props) => {
 
         setName(data.name || "");
         setWorkerType(data.worker_type || "");
-        setDescription(data.description || "");
+        setDescription(data.description || ""); // telefon raqam backendda description sifatida
         setImage(data.image || null);
       } catch (err) {
         setError("Ошибка при получении данных");
@@ -97,7 +50,7 @@ const WorkerEdit = (props) => {
 
       formData.append("name", name);
       formData.append("worker_type", workerType);
-      formData.append("description", description);
+      formData.append("description", description); // telefon raqam description sifatida yuboriladi
 
       if (newImage) {
         formData.append("image", newImage);
@@ -149,23 +102,15 @@ const WorkerEdit = (props) => {
         />
       </Box>
 
-      {/* Description */}
-      <Box
-        mb="md"
-        width="70%"
-        style={{
-          backgroundColor: "rgba(104, 144, 156, 0.1)",
-          padding: "10px",
-          borderRadius: "8px",
-          color: "white",
-        }}
-      >
-        <Label>Описание</Label>
-        <Editor
+      {/* Phone Number (description sifatida) */}
+      <Box mb="md" width="50%">
+        <Label>Телефонный номер</Label>
+        <Input
+          type="tel"
           value={description}
-          onTextChange={(e) => setDescription(e.htmlValue)}
-          headerTemplate={headerTemplate}
-          style={{ height: "250px" }}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="+998 90 123 45 67"
+          width="100%"
         />
       </Box>
 

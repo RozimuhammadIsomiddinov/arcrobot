@@ -17,6 +17,7 @@ const Blog = sequelize.define(
     author_name: DataTypes.STRING,
     author_image: DataTypes.TEXT,
     author_description: DataTypes.TEXT,
+    author_phone: DataTypes.TEXT,
   },
   {
     sequelize,

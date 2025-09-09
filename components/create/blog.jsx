@@ -49,6 +49,7 @@ const BlogCreate = () => {
   const [authorName, setAuthorName] = useState("");
   const [authorDescription, setAuthorDescription] = useState("");
   const [authorImage, setAuthorImage] = useState(null);
+  const [authorPhone, setAuthorPhone] = useState(""); // qo‘shildi
 
   // PrimeReact stillarini komponent yuklanganda qo'shish
   useEffect(() => {
@@ -86,6 +87,8 @@ const BlogCreate = () => {
       // author data
       formData.append("author_name", authorName);
       formData.append("author_description", authorDescription);
+      formData.append("author_phone", authorPhone);
+
       if (authorImage) {
         formData.append("author_image", authorImage);
       }
@@ -185,7 +188,6 @@ const BlogCreate = () => {
           placeholder="Введите заголовок"
         />
       </Box>
-
       {/* Subtitles */}
       <Box mb="md" width="50%">
         <Label>Подзаголовок</Label>
@@ -206,7 +208,6 @@ const BlogCreate = () => {
           placeholder="Введите подзаголовок"
         />
       </Box>
-
       {/* Description - PrimeReact Editor */}
       <Box
         mb="md"
@@ -233,7 +234,6 @@ const BlogCreate = () => {
           />
         </div>
       </Box>
-
       {/* Author Name */}
       <Box mb="md" width="50%">
         <Label>Имя Автора</Label>
@@ -244,7 +244,6 @@ const BlogCreate = () => {
           placeholder="Введите имя автора"
         />
       </Box>
-
       {/* Author Description */}
       <Box mb="md" width="50%">
         <Label>Описание Автора</Label>
@@ -263,6 +262,21 @@ const BlogCreate = () => {
           }}
           onChange={(e) => setAuthorDescription(e.target.value)}
           placeholder="Введите описание автора"
+        />
+      </Box>
+      // Author Phone
+      <Box mb="md" width="50%">
+        <Label>Телефон Автора</Label>
+        <Input
+          type="tel"
+          value={authorPhone}
+          width="100%"
+          onChange={(e) => setAuthorPhone(e.target.value)}
+          placeholder="+998 (__) ___-__-__"
+          style={{
+            letterSpacing: "1px",
+            fontSize: "15px",
+          }}
         />
       </Box>
       {/* Author Image Upload */}
@@ -322,12 +336,10 @@ const BlogCreate = () => {
           />
         )}
       </Box>
-
       {/* Images Upload */}
       <Label mb="lg" style={{ fontSize: "20px", fontWeight: "bold" }}>
         Изображения (максимум 10)
       </Label>
-
       <Box
         mb="md"
         style={{
@@ -406,7 +418,6 @@ const BlogCreate = () => {
           </Box>
         ))}
       </Box>
-
       <Button
         type="button"
         mt="lg"
@@ -415,7 +426,6 @@ const BlogCreate = () => {
       >
         ➕ Добавить изображение
       </Button>
-
       <Button
         type="button"
         mt="lg"
@@ -433,7 +443,6 @@ const BlogCreate = () => {
       >
         🚀 Сохранить
       </Button>
-
       {uploaded.length > 0 && (
         <Box mt="xl" width="80%">
           <Label style={{ fontSize: "18px", marginBottom: "10px" }}>

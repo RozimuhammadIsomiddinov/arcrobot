@@ -142,6 +142,7 @@ router.post(
   ]),
   async (req, res) => {
     try {
+      // Fayllar kelmagan bo‘lsa
       if (
         (!req.files?.files || req.files.files.length === 0) &&
         (!req.files?.other_files || req.files.other_files.length === 0)
@@ -149,14 +150,14 @@ router.post(
         return res.status(400).json({ error: "Hech qanday fayl yuklanmadi" });
       }
 
-      // asosiy images
+      // Asosiy images
       const imagePaths = req.files?.files
         ? req.files.files.map(
             (file) => `${process.env.BACKEND_URL}/${file.filename}`
           )
         : [];
 
-      // qo'shimcha other_images
+      // Qo‘shimcha other_images
       const otherImagePaths = req.files?.other_files
         ? req.files.other_files.map(
             (file) => `${process.env.BACKEND_URL}/${file.filename}`
@@ -166,34 +167,36 @@ router.post(
       let { name, title, description, property, images, other_images } =
         req.body;
 
-      try {
-        property = property ? JSON.parse(property) : {};
-      } catch {
-        property = {};
-      }
+      // JSON parse helper
+      const safeParse = (data, fallback) => {
+        try {
+          return data ? JSON.parse(data) : fallback;
+        } catch {
+          return fallback;
+        }
+      };
 
-      try {
-        images = images ? JSON.parse(images) : [];
-      } catch {
-        images = [];
-      }
-
-      try {
-        other_images = other_images ? JSON.parse(other_images) : [];
-      } catch {
-        other_images = [];
-      }
+      property = safeParse(property, {});
+      images = safeParse(images, []);
+      other_images = safeParse(other_images, []);
 
       const finalImages = [...images, ...imagePaths];
       const finalOtherImages = [...other_images, ...otherImagePaths];
+
+      // 🔹 Sotuv maydonlari
+      const { price, isDiscount, delivery_days, storage_days } = req.body;
 
       const catalog = await Catalog.create({
         name,
         title,
         description,
+        property,
         images: finalImages,
         other_images: finalOtherImages,
-        property,
+        price,
+        isDiscount,
+        delivery_days,
+        storage_days,
       });
 
       res.json({ success: true, data: catalog });
@@ -203,23 +206,36 @@ router.post(
     }
   }
 );
+
 router.put(
   "/update/:id",
   upload.fields([
-    { name: "updatedImages" }, // eski asosiy rasmni yangilash
-    { name: "newImages" }, // yangi asosiy rasm qo‘shish
-    { name: "updatedOtherImages" }, // eski qo‘shimcha rasmni yangilash
-    { name: "newOtherImages" }, // yangi qo‘shimcha rasm qo‘shish
+    { name: "updatedImages" },
+    { name: "newImages" },
+    { name: "updatedOtherImages" },
+    { name: "newOtherImages" },
   ]),
   async (req, res) => {
     try {
+      const safeParse = (data, fallback) => {
+        try {
+          return data ? JSON.parse(data) : fallback;
+        } catch {
+          return fallback;
+        }
+      };
+
       // ===== Asosiy images =====
-      let imagesFromClient = req.body.images ? JSON.parse(req.body.images) : [];
+      let imagesFromClient = safeParse(req.body.images, []);
 
       if (req.files?.updatedImages) {
         req.files.updatedImages.forEach((file, idx) => {
           const newUrl = `${process.env.BACKEND_URL}/${file.filename}`;
-          imagesFromClient.splice(idx, 1, newUrl); // index bo‘yicha almashtirish
+          if (imagesFromClient[idx]) {
+            imagesFromClient[idx] = newUrl;
+          } else {
+            imagesFromClient.push(newUrl);
+          }
         });
       }
 
@@ -231,14 +247,16 @@ router.put(
       }
 
       // ===== Qo‘shimcha other_images =====
-      let otherImagesFromClient = req.body.other_images
-        ? JSON.parse(req.body.other_images)
-        : [];
+      let otherImagesFromClient = safeParse(req.body.other_images, []);
 
       if (req.files?.updatedOtherImages) {
         req.files.updatedOtherImages.forEach((file, idx) => {
           const newUrl = `${process.env.BACKEND_URL}/${file.filename}`;
-          otherImagesFromClient.splice(idx, 1, newUrl); // index bo‘yicha almashtirish
+          if (otherImagesFromClient[idx]) {
+            otherImagesFromClient[idx] = newUrl;
+          } else {
+            otherImagesFromClient.push(newUrl);
+          }
         });
       }
 
@@ -250,15 +268,13 @@ router.put(
       }
 
       // ===== Property parse =====
-      let property = {};
-      try {
-        property = req.body.property ? JSON.parse(req.body.property) : {};
-      } catch {
-        property = {};
-      }
+      const property = safeParse(req.body.property, {});
+
+      // 🔹 Sotuv maydonlari
+      const { price, isDiscount, delivery_days, storage_days } = req.body;
 
       // ===== Update DB =====
-      const [_, updatedRows] = await Catalog.update(
+      const [affectedCount, updatedRows] = await Catalog.update(
         {
           name: req.body.name,
           title: req.body.title,
@@ -266,12 +282,23 @@ router.put(
           property,
           images: imagesFromClient,
           other_images: otherImagesFromClient,
+          price,
+          isDiscount,
+          delivery_days,
+          storage_days,
         },
         {
           where: { id: req.params.id },
           returning: true,
         }
       );
+
+      if (affectedCount === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Catalog topilmadi",
+        });
+      }
 
       res.json({
         success: true,

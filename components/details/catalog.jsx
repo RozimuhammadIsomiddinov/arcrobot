@@ -171,6 +171,7 @@ const CatalogDetails = (props) => {
       <h1 style={{ marginBottom: 20 }}>📄 Детали каталога #{catalog.id}</h1>
 
       {/* Asosiy ma'lumotlar */}
+      {/* Asosiy ma'lumotlar */}
       <div style={cardStyle}>
         <h2 style={{ marginBottom: 15 }}> Основная информация</h2>
         <Table style={{ color: "#fff" }}>
@@ -181,6 +182,7 @@ const CatalogDetails = (props) => {
               </TableCell>
               <TableCell style={{ color: "#ccc" }}>{catalog.name}</TableCell>
             </TableRow>
+
             <TableRow>
               <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
                 Описание
@@ -191,6 +193,43 @@ const CatalogDetails = (props) => {
                 />
               </TableCell>
             </TableRow>
+
+            <TableRow>
+              <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
+                Цена
+              </TableCell>
+              <TableCell style={{ color: "#ccc" }}>
+                {catalog.price ? catalog.price + " сум" : "—"}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
+                Есть скидка?
+              </TableCell>
+              <TableCell style={{ color: "#ccc" }}>
+                {catalog.isDiscount ? "✅ Да" : "❌ Нет"}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
+                Доставка (дни)
+              </TableCell>
+              <TableCell style={{ color: "#ccc" }}>
+                {catalog.delivery_days ? catalog.delivery_days + " дней" : "—"}
+              </TableCell>
+            </TableRow>
+
+            <TableRow>
+              <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
+                Срок хранения (дни)
+              </TableCell>
+              <TableCell style={{ color: "#ccc" }}>
+                {catalog.storage_days ? catalog.storage_days + " дней" : "—"}
+              </TableCell>
+            </TableRow>
+
             <TableRow>
               <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
                 Дата создания

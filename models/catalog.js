@@ -20,6 +20,24 @@ const Catalog = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
+
+    // 🔹 Sotuvga oid maydonlar
+    price: {
+      type: DataTypes.DECIMAL(10, 2), // masalan: 9999.99
+      allowNull: false,
+    },
+    isDiscount: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    delivery_days: {
+      type: DataTypes.INTEGER, // kunlarda yetkazib berish
+      allowNull: true,
+    },
+    storage_days: {
+      type: DataTypes.INTEGER, // saqlanish muddati (kun)
+      allowNull: true,
+    },
   },
   {
     sequelize,
@@ -28,4 +46,5 @@ const Catalog = sequelize.define(
     timestamps: true,
   }
 );
+
 export default Catalog;

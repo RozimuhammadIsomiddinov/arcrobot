@@ -128,6 +128,10 @@ const CatalogEdit = (props) => {
   const [newOtherImages, setNewOtherImages] = useState([]);
   const [properties, setProperties] = useState([]);
   const [error, setError] = useState(null);
+  const [price, setPrice] = useState("");
+  const [isDiscount, setIsDiscount] = useState(false);
+  const [deliveryDays, setDeliveryDays] = useState("");
+  const [storageDays, setStorageDays] = useState("");
 
   useEffect(() => {
     addPrimeStyles();
@@ -149,7 +153,10 @@ const CatalogEdit = (props) => {
         setName(data.name || "");
         setTitle(data.title || "");
         setDescription(data.description || "");
-
+        setPrice(data.price || "");
+        setIsDiscount(Boolean(data.isDiscount));
+        setDeliveryDays(data.delivery_days || "");
+        setStorageDays(data.storage_days || "");
         // Images parse
         let parsedImages = [];
         if (typeof data.images === "string") {
@@ -309,6 +316,10 @@ const CatalogEdit = (props) => {
       formData.append("name", name);
       formData.append("title", title);
       formData.append("description", description);
+      formData.append("price", price);
+      formData.append("isDiscount", isDiscount);
+      formData.append("delivery_days", deliveryDays);
+      formData.append("storage_days", storageDays);
       formData.append(
         "property",
         JSON.stringify(
@@ -681,6 +692,53 @@ const CatalogEdit = (props) => {
         <Button variant="primary" onClick={handleAddProperty}>
           Добавить свойство
         </Button>
+      </Box>
+      {/* Price */}
+      <Box mb="md" width="50%">
+        <Label>Цена (сум)</Label>
+        <Input
+          type="number"
+          value={price}
+          onChange={(e) => setPrice(e.target.value)}
+          placeholder="Введите цену"
+          width="100%"
+        />
+      </Box>
+
+      {/* Is Discount */}
+      <Box mb="md" width="50%">
+        <Label>Скидка</Label>
+        <input
+          type="checkbox"
+          checked={isDiscount}
+          color="white"
+          onChange={(e) => setIsDiscount(e.target.checked)}
+        />{" "}
+        Есть скидка?
+      </Box>
+
+      {/* Delivery days */}
+      <Box mb="md" width="50%">
+        <Label>Срок доставки (дней)</Label>
+        <Input
+          type="number"
+          value={deliveryDays}
+          onChange={(e) => setDeliveryDays(e.target.value)}
+          placeholder="Введите количество дней"
+          width="100%"
+        />
+      </Box>
+
+      {/* Storage days */}
+      <Box mb="md" width="50%">
+        <Label>Срок хранения (дней)</Label>
+        <Input
+          type="number"
+          value={storageDays}
+          onChange={(e) => setStorageDays(e.target.value)}
+          placeholder="Введите количество дней"
+          width="100%"
+        />
       </Box>
 
       <Button variant="primary" mt="lg" onClick={handleSave}>

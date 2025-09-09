@@ -1,37 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Box, Label, Button, Input } from "@adminjs/design-system";
 import axios from "axios";
-import { Editor } from "primereact/editor";
 
-// PrimeReact CSS fayllarini dinamik ulash
-const addPrimeStyles = () => {
-  const themeUrl =
-    "https://cdn.jsdelivr.net/npm/primereact@9.6.0/resources/themes/lara-light-blue/theme.css";
-  const coreUrl =
-    "https://cdn.jsdelivr.net/npm/primereact@9.6.0/resources/primereact.min.css";
-  const iconsUrl =
-    "https://cdn.jsdelivr.net/npm/primeicons@6.0.1/primeicons.css";
-
-  [themeUrl, coreUrl, iconsUrl].forEach((url) => {
-    if (!document.querySelector(`link[href="${url}"]`)) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = url;
-      document.head.appendChild(link);
-    }
-  });
-};
-
+// PrimeReact Editor CSS fayllari endi kerak emas, chunki telefon raqam uchun Input ishlatamiz
 const WorkerCreate = () => {
   const [name, setName] = useState("");
   const [workerType, setWorkerType] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState(""); // Telefon raqam uchun
   const [file, setFile] = useState(null);
   const [uploaded, setUploaded] = useState(null);
-
-  useEffect(() => {
-    addPrimeStyles();
-  }, []);
 
   const handleUpload = async () => {
     if (!name || !workerType || !description) {
@@ -42,7 +19,7 @@ const WorkerCreate = () => {
       const formData = new FormData();
       formData.append("name", name);
       formData.append("worker_type", workerType);
-      formData.append("description", description);
+      formData.append("description", description); // Backendda description nomi bilan saqlanadi
       if (file) formData.append("image", file);
 
       const res = await axios.post(
@@ -59,83 +36,6 @@ const WorkerCreate = () => {
       alert("Ошибка: " + (err.response?.data?.message || err.message));
     }
   };
-
-  // ✨ Editor uchun headerTemplate
-  const headerTemplate = (
-    <span className="ql-formats">
-      {/* Matn stilini sozlash */}
-      <select className="ql-font">
-        <option selected></option>
-        <option value="serif"></option>
-        <option value="monospace"></option>
-      </select>
-
-      <select className="ql-size">
-        <option value="small"></option>
-        <option selected></option>
-        <option value="large"></option>
-        <option value="huge"></option>
-      </select>
-
-      {/* Bold, Italic, Underline va Strike */}
-      <button className="ql-bold" aria-label="Bold"></button>
-      <button className="ql-italic" aria-label="Italic"></button>
-      <button className="ql-underline" aria-label="Underline"></button>
-      <button className="ql-strike" aria-label="Strike"></button>
-
-      {/* Heading */}
-      <select className="ql-header">
-        <option value="1">H1</option>
-        <option value="2">H2</option>
-        <option value="3">H3</option>
-        <option value="4">H4</option>
-        <option value="5">H5</option>
-        <option value="6">H6</option>
-        <option selected>Normal</option>
-      </select>
-
-      {/* Ranglar */}
-      <select className="ql-color"></select>
-      <select className="ql-background"></select>
-
-      {/* Listlar */}
-      <button
-        className="ql-list"
-        value="ordered"
-        aria-label="Ordered List"
-      ></button>
-      <button
-        className="ql-list"
-        value="bullet"
-        aria-label="Unordered List"
-      ></button>
-      <button
-        className="ql-indent"
-        value="-1"
-        aria-label="Decrease Indent"
-      ></button>
-      <button
-        className="ql-indent"
-        value="+1"
-        aria-label="Increase Indent"
-      ></button>
-
-      {/* Align */}
-      <select className="ql-align"></select>
-
-      {/* Quote va Code */}
-      <button className="ql-blockquote" aria-label="Blockquote"></button>
-      <button className="ql-code-block" aria-label="Code Block"></button>
-
-      {/* Link, Image, Video */}
-      <button className="ql-link" aria-label="Link"></button>
-      <button className="ql-image" aria-label="Image"></button>
-      <button className="ql-video" aria-label="Video"></button>
-
-      {/* Tozalash */}
-      <button className="ql-clean" aria-label="Remove Formatting"></button>
-    </span>
-  );
 
   return (
     <Box flex flexDirection="column" alignItems="center" mt="xl" width="100%">
@@ -161,23 +61,15 @@ const WorkerCreate = () => {
         />
       </Box>
 
-      {/* Description */}
+      {/* Phone number */}
       <Box mb="md" width="50%">
-        <Label>Описание</Label>
-        <div
-          style={{
-            border: "1px solid #ced4da",
-            borderRadius: "6px",
-            overflow: "hidden",
-          }}
-        >
-          <Editor
-            value={description}
-            onTextChange={(e) => setDescription(e.htmlValue)}
-            headerTemplate={headerTemplate}
-            style={{ height: "250px", color: "white" }}
-          />
-        </div>
+        <Label>Телефонный номер</Label>
+        <Input
+          value={description}
+          width="100%"
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Введите номер телефона"
+        />
       </Box>
 
       {/* Image upload */}
@@ -226,7 +118,6 @@ const WorkerCreate = () => {
                 objectFit: "cover",
                 borderRadius: "6px",
                 border: "1px solid #ccc",
-                color: "white",
               }}
             />
           </Box>

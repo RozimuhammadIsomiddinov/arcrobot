@@ -66,10 +66,9 @@ const WorkerList = () => {
           <TableRow>
             <TableCell style={leftCellStyle}>ID</TableCell>
             <TableCell style={leftCellStyle}>Имя</TableCell>
-            <TableCell style={leftCellStyle}>Тип сотрудника</TableCell>{" "}
-            {/* Qo'shildi */}
+            <TableCell style={leftCellStyle}>Тип сотрудника</TableCell>
             <TableCell style={leftCellStyle}>Фото</TableCell>
-            <TableCell style={leftCellStyle}>Описание</TableCell>
+            <TableCell style={leftCellStyle}>Телефон</TableCell>
             <TableCell style={leftCellStyle}>Дата создания</TableCell>
             <TableCell>Действия</TableCell>
           </TableRow>
@@ -88,8 +87,7 @@ const WorkerList = () => {
                 <TableCell style={leftCellStyle}>{worker.name}</TableCell>
                 <TableCell style={leftCellStyle}>
                   {worker.worker_type}
-                </TableCell>{" "}
-                {/* Qo'shildi */}
+                </TableCell>
                 <TableCell style={leftCellStyle}>
                   {worker.image ? (
                     <img
@@ -102,7 +100,16 @@ const WorkerList = () => {
                   )}
                 </TableCell>
                 <TableCell style={leftCellStyle}>
-                  {worker.description?.slice(0, 50)}...
+                  {worker.description ? (
+                    <a
+                      href={`tel:${worker.description}`}
+                      style={{ color: "#0d6efd", textDecoration: "none" }}
+                    >
+                      {worker.description}
+                    </a>
+                  ) : (
+                    <span>—</span>
+                  )}
                 </TableCell>
                 <TableCell style={leftCellStyle}>
                   {new Date(worker.createdAt).toLocaleString()}
@@ -143,8 +150,7 @@ const WorkerList = () => {
                   <TableCell>{selectedWorker.name}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell style={leftCellStyle}>Тип сотрудника</TableCell>{" "}
-                  {/* Qo'shildi */}
+                  <TableCell style={leftCellStyle}>Тип сотрудника</TableCell>
                   <TableCell>{selectedWorker.worker_type}</TableCell>
                 </TableRow>
                 <TableRow>
@@ -162,13 +168,18 @@ const WorkerList = () => {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell style={leftCellStyle}>Описание</TableCell>
+                  <TableCell style={leftCellStyle}>Телефон</TableCell>
                   <TableCell>
-                    <div
-                      dangerouslySetInnerHTML={{
-                        __html: selectedWorker.description,
-                      }}
-                    />
+                    {selectedWorker.description ? (
+                      <a
+                        href={`tel:${selectedWorker.description}`}
+                        style={{ color: "#0d6efd", textDecoration: "none" }}
+                      >
+                        {selectedWorker.description}
+                      </a>
+                    ) : (
+                      <span>—</span>
+                    )}
                   </TableCell>
                 </TableRow>
                 <TableRow>

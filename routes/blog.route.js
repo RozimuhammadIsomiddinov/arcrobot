@@ -163,6 +163,7 @@ router.post(
         author_name: req.body.author_name,
         author_image: authorImagePath, // multer orqali yuklangan fayl
         author_description: req.body.author_description,
+        author_phone: req.body.author_phone,
 
         createdAt: new Date(),
         updatedAt: new Date(),

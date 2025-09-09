@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Box, Label, Button, Input } from "@adminjs/design-system";
 import axios from "axios";
 import { Editor } from "primereact/editor";
@@ -105,12 +105,6 @@ const headerTemplate = (
     <button className="ql-blockquote" aria-label="Blockquote"></button>
     <button className="ql-code-block" aria-label="Code Block"></button>
 
-    {/* Link, Image, Video */}
-    <button className="ql-link" aria-label="Link"></button>
-    <button className="ql-image" aria-label="Image"></button>
-    <button className="ql-video" aria-label="Video"></button>
-
-    {/* Tozalash */}
     <button className="ql-clean" aria-label="Remove Formatting"></button>
   </span>
 );
@@ -121,73 +115,146 @@ const CatalogCreate = () => {
   const [description, setDescription] = useState("");
   const [properties, setProperties] = useState([{ key: "", value: "" }]);
 
-  // images uchun
+  // asosiy images inputs - har biri {id, file}
   const [inputs, setInputs] = useState([{ id: Date.now(), file: null }]);
+  const [previews, setPreviews] = useState({}); // { id: objectURL }
 
-  // other_images uchun
+  // other_images inputs
   const [otherInputs, setOtherInputs] = useState([
     { id: Date.now() + 1, file: null },
   ]);
+  const [otherPreviews, setOtherPreviews] = useState({});
+
+  // sotuv maydonlari
+  const [price, setPrice] = useState("");
+  const [isDiscount, setIsDiscount] = useState(false);
+  const [deliveryDays, setDeliveryDays] = useState("");
+  const [storageDays, setStorageDays] = useState("");
+
+  const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
+
+  const isMountedRef = useRef(true);
 
   useEffect(() => {
     addPrimeStyles();
+    return () => {
+      // Unmountda objectURLlarni tozalash
+      Object.values(previews).forEach((u) => u && URL.revokeObjectURL(u));
+      Object.values(otherPreviews).forEach((u) => u && URL.revokeObjectURL(u));
+      isMountedRef.current = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // property o'zgartirish
+  // propertylar bilan ishlash
   const handlePropertyChange = (index, field, value) => {
     const updated = [...properties];
     updated[index][field] = value;
     setProperties(updated);
   };
-
   const addProperty = () =>
     setProperties([...properties, { key: "", value: "" }]);
   const removeProperty = (index) =>
     setProperties(properties.filter((_, i) => i !== index));
 
-  // rasm tanlash
+  // file change handlers (main images)
   const handleFileChange = (index, file) => {
     const newInputs = [...inputs];
+    const id = newInputs[index].id;
+    // revoke old preview if existed
+    if (previews[id]) {
+      URL.revokeObjectURL(previews[id]);
+    }
+
     newInputs[index].file = file;
     setInputs(newInputs);
+
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreviews((p) => ({ ...p, [id]: url }));
+    } else {
+      setPreviews((p) => {
+        const copy = { ...p };
+        delete copy[id];
+        return copy;
+      });
+    }
   };
 
-  // other_images rasm tanlash
   const handleOtherFileChange = (index, file) => {
     const newInputs = [...otherInputs];
+    const id = newInputs[index].id;
+    if (otherPreviews[id]) {
+      URL.revokeObjectURL(otherPreviews[id]);
+    }
+
     newInputs[index].file = file;
     setOtherInputs(newInputs);
+
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setOtherPreviews((p) => ({ ...p, [id]: url }));
+    } else {
+      setOtherPreviews((p) => {
+        const copy = { ...p };
+        delete copy[id];
+        return copy;
+      });
+    }
   };
 
-  // yangi rasm input qo'shish
+  // add/remove image inputs
   const addInput = () => {
-    if (inputs.length >= 10)
-      return alert("Максимум можно загрузить 10 изображений!");
+    if (inputs.length >= 10) {
+      alert("Максимум можно загрузить 10 изображений!");
+      return;
+    }
     setInputs([...inputs, { id: Date.now(), file: null }]);
+  };
+  const removeInput = (index) => {
+    const removed = inputs[index];
+    if (removed && previews[removed.id]) {
+      URL.revokeObjectURL(previews[removed.id]);
+      setPreviews((p) => {
+        const copy = { ...p };
+        delete copy[removed.id];
+        return copy;
+      });
+    }
+    setInputs(inputs.filter((_, i) => i !== index));
   };
 
   const addOtherInput = () => {
-    if (otherInputs.length >= 10)
-      return alert("Максимум можно загрузить 10 изображений!");
+    if (otherInputs.length >= 10) {
+      alert("Максимум можно загрузить 10 изображений!");
+      return;
+    }
     setOtherInputs([...otherInputs, { id: Date.now(), file: null }]);
   };
+  const removeOtherInput = (index) => {
+    const removed = otherInputs[index];
+    if (removed && otherPreviews[removed.id]) {
+      URL.revokeObjectURL(otherPreviews[removed.id]);
+      setOtherPreviews((p) => {
+        const copy = { ...p };
+        delete copy[removed.id];
+        return copy;
+      });
+    }
+    setOtherInputs(otherInputs.filter((_, i) => i !== index));
+  };
 
+  // validation va submit
   const handleSave = async () => {
-    // Validatsiya
+    // Basic validation
     const imagesCount = inputs.filter((i) => i.file).length;
     const otherImagesCount = otherInputs.filter((i) => i.file).length;
     const validPropertiesCount = properties.filter(
       (p) => p.key && p.key.trim().length > 0
     ).length;
 
-    if (imagesCount === 0 && validPropertiesCount === 0) {
-      alert(
-        "Ошибка: Пожалуйста, загрузите хотя бы одно изображение и добавьте хотя бы одно свойство."
-      );
-      return;
-    }
-
-    if (imagesCount === 0) {
+    if (imagesCount === 0 && otherImagesCount === 0) {
       alert("Ошибка: Пожалуйста, загрузите хотя бы одно изображение.");
       return;
     }
@@ -200,40 +267,79 @@ const CatalogCreate = () => {
     }
 
     try {
+      setLoading(true);
+      setProgress(0);
+
+      // property obyekt
       const propertyObj = {};
       properties.forEach((p) => {
-        if (p.key && p.key.trim()) propertyObj[p.key.trim()] = p.value;
+        if (p.key && p.key.trim()) propertyObj[p.key.trim()] = p.value || "";
       });
 
       const formData = new FormData();
       formData.append("name", name);
       formData.append("title", title);
-      formData.append("description", description);
+      formData.append("description", description || "");
       formData.append("property", JSON.stringify(propertyObj));
 
+      // files
       inputs.forEach((input) => {
         if (input.file) formData.append("files", input.file);
       });
-
       otherInputs.forEach((input) => {
         if (input.file) formData.append("other_files", input.file);
       });
 
-      await axios.post(
+      // sotuv maydonlari: stringlarga convert
+      const parsedPrice = price === "" ? "0" : String(parseFloat(price) || 0);
+      formData.append("price", parsedPrice);
+      formData.append("isDiscount", isDiscount ? "true" : "false");
+      formData.append(
+        "delivery_days",
+        deliveryDays === "" ? "" : String(parseInt(deliveryDays, 10))
+      );
+      formData.append(
+        "storage_days",
+        storageDays === "" ? "" : String(parseInt(storageDays, 10))
+      );
+
+      const resp = await axios.post(
         `${window.location.origin}/api/catalog/create`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (progressEvent) => {
+            if (!isMountedRef.current) return;
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / (progressEvent.total || 1)
+            );
+            setProgress(percent);
+          },
         }
       );
 
-      alert("Каталог успешно создан!");
-      window.location.href = "/admin/resources/catalog";
+      if (resp?.data?.success) {
+        alert("Каталог успешно создан!");
+        window.location.href = "/admin/resources/catalog";
+      } else {
+        alert(
+          "Ошибка при создании: " +
+            (resp?.data?.error || JSON.stringify(resp?.data))
+        );
+      }
     } catch (err) {
       console.error(err);
       alert(
-        "Ошибка: " + (err.message || "Во время сохранения произошла ошибка")
+        "Ошибка: " +
+          (err?.response?.data?.error ||
+            err.message ||
+            "Во время сохранения произошла ошибка")
       );
+    } finally {
+      if (isMountedRef.current) {
+        setLoading(false);
+        setProgress(0);
+      }
     }
   };
 
@@ -269,12 +375,59 @@ const CatalogCreate = () => {
         />
       </Box>
 
+      {/* Price & meta */}
+      <Box mb="md" width="70%" display="flex" gap="12px" alignItems="center">
+        <Box width="30%">
+          <Label>Цена</Label>
+          <Input
+            value={price}
+            type="number"
+            step="0.01"
+            min="0"
+            onChange={(e) => setPrice(e.target.value)}
+          />
+        </Box>
+
+        <Box width="20%">
+          <Label>Скидка</Label>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <input
+              id="isDiscount"
+              type="checkbox"
+              checked={isDiscount}
+              onChange={(e) => setIsDiscount(e.target.checked)}
+            />
+            <label htmlFor="isDiscount">Есть</label>
+          </div>
+        </Box>
+
+        <Box width="25%">
+          <Label>Доставка (дней)</Label>
+          <Input
+            value={deliveryDays}
+            type="number"
+            min="0"
+            onChange={(e) => setDeliveryDays(e.target.value)}
+          />
+        </Box>
+
+        <Box width="25%">
+          <Label>Срок хранения (дней)</Label>
+          <Input
+            value={storageDays}
+            type="number"
+            min="0"
+            onChange={(e) => setStorageDays(e.target.value)}
+          />
+        </Box>
+      </Box>
+
       {/* Description */}
       <Box
         mb="md"
         width="70%"
         style={{
-          backgroundColor: "rgba(104, 144, 156, 0.1)",
+          backgroundColor: "rgba(104, 144, 156, 0.06)",
           padding: "10px",
           borderRadius: "8px",
           color: "white",
@@ -283,7 +436,7 @@ const CatalogCreate = () => {
         <Label>Описание</Label>
         <Editor
           value={description}
-          onTextChange={(e) => setDescription(e.htmlValue)}
+          onTextChange={(e) => setDescription(e.htmlValue || e.html || "")}
           headerTemplate={headerTemplate}
           style={{ height: "300px" }}
         />
@@ -294,7 +447,7 @@ const CatalogCreate = () => {
         <Label>Свойства</Label>
         {properties.map((p, index) => (
           <Box
-            key={index}
+            key={p.key + index}
             display="flex"
             flexDirection="row"
             alignItems="center"
@@ -380,14 +533,35 @@ const CatalogCreate = () => {
               <span style={{ fontSize: "14px", fontWeight: "500" }}>
                 {input.file.name}
               </span>
-              <img
-                src={URL.createObjectURL(input.file)}
-                alt="preview"
-                style={styles.preview}
-              />
+              {previews[input.id] && (
+                <img
+                  src={previews[input.id]}
+                  alt="preview"
+                  style={styles.preview}
+                />
+              )}
+              <Button
+                type="button"
+                size="icon"
+                variant="danger"
+                onClick={() => removeInput(index)}
+              >
+                🗑
+              </Button>
             </>
           ) : (
-            <span style={{ color: "#555" }}>Файл не выбран</span>
+            <>
+              <span style={{ color: "#555" }}>Файл не выбран</span>
+              <Button
+                type="button"
+                size="icon"
+                variant="danger"
+                onClick={() => removeInput(index)}
+                style={{ marginLeft: "auto" }}
+              >
+                ❌
+              </Button>
+            </>
           )}
         </Box>
       ))}
@@ -402,7 +576,7 @@ const CatalogCreate = () => {
         mt="xl"
         style={{ fontSize: "20px", fontWeight: "bold", color: "white" }}
       >
-        Дополнительные изображения ( MARKER )
+        Дополнительные изображения
       </Label>
 
       {otherInputs.map((input, index) => (
@@ -422,14 +596,34 @@ const CatalogCreate = () => {
               <span style={{ fontSize: "14px", fontWeight: "500" }}>
                 {input.file.name}
               </span>
-              <img
-                src={URL.createObjectURL(input.file)}
-                alt="preview"
-                style={styles.preview}
-              />
+              {otherPreviews[input.id] && (
+                <img
+                  src={otherPreviews[input.id]}
+                  alt="preview"
+                  style={styles.preview}
+                />
+              )}
+              <Button
+                type="button"
+                size="icon"
+                variant="danger"
+                onClick={() => removeOtherInput(index)}
+              >
+                🗑
+              </Button>
             </>
           ) : (
-            <span style={{ color: "#555" }}>Файл не выбран</span>
+            <>
+              <span style={{ color: "#555" }}>Файл не выбран</span>
+              <Button
+                type="button"
+                size="icon"
+                variant="danger"
+                onClick={() => removeOtherInput(index)}
+              >
+                ❌
+              </Button>
+            </>
           )}
         </Box>
       ))}
@@ -443,17 +637,26 @@ const CatalogCreate = () => {
         ➕ Добавить дополнительное изображение
       </Button>
 
+      {/* Progress & Save */}
+      {loading && (
+        <Box width="70%" mt="md">
+          <Label>Загрузка: {progress}%</Label>
+          <progress value={progress} max="100" style={{ width: "100%" }} />
+        </Box>
+      )}
+
       <Button
         type="button"
         mt="lg"
         variant="primary"
         onClick={(e) => {
           e.preventDefault();
-          handleSave();
+          if (!loading) handleSave();
         }}
         style={{ marginTop: 12 }}
+        disabled={loading}
       >
-        🚀 Сохранить
+        {loading ? "Идет загрузка..." : "🚀 Сохранить"}
       </Button>
     </Box>
   );

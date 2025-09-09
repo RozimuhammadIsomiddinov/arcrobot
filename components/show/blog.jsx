@@ -9,6 +9,7 @@ import {
   TableBody,
   Button,
   Modal,
+  Label,
 } from "@adminjs/design-system";
 import { useNavigate } from "react-router-dom";
 
@@ -46,6 +47,7 @@ const BlogList = () => {
       console.error("Error fetching blog details:", err);
     }
   };
+
   const handleEditClick = (id) => {
     navigate(`/admin/resources/blog/records/${id}/edit`);
   };
@@ -57,6 +59,7 @@ const BlogList = () => {
   const leftCellStyle = {
     fontWeight: "bold",
     borderRight: "2px solid #ccc",
+    width: "180px",
   };
 
   return (
@@ -205,6 +208,27 @@ const BlogList = () => {
                     )}
                   </TableCell>
                 </TableRow>
+
+                <TableRow>
+                  <TableCell style={leftCellStyle}>Телефон Автора</TableCell>
+                  <TableCell>
+                    {selectedBlog.author_phone ? (
+                      <a
+                        href={`tel:${selectedBlog.author_phone}`}
+                        style={{
+                          color: "#007bff",
+                          textDecoration: "none",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {selectedBlog.author_phone}
+                      </a>
+                    ) : (
+                      "—"
+                    )}
+                  </TableCell>
+                </TableRow>
+
                 <TableRow>
                   <TableCell style={leftCellStyle}>О авторе</TableCell>
                   <TableCell>
