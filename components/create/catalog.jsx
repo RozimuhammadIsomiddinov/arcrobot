@@ -115,6 +115,7 @@ const CatalogCreate = () => {
   const [subtitle, setSubtitle] = useState("");
   const [description, setDescription] = useState("");
   const [properties, setProperties] = useState([{ key: "", value: "" }]);
+  const [orderKey, setOrderKey] = useState("");
 
   // asosiy images inputs - har biri {id, file}
   const [inputs, setInputs] = useState([{ id: Date.now(), file: null }]);
@@ -284,6 +285,7 @@ const CatalogCreate = () => {
 
       formData.append("description", description || "");
       formData.append("property", JSON.stringify(propertyObj));
+      if (orderKey) formData.append("order_key", orderKey);
 
       // files
       inputs.forEach((input) => {
@@ -356,8 +358,18 @@ const CatalogCreate = () => {
           width="100%"
           onChange={(e) => setName(e.target.value)}
         />
+      </Box>{" "}
+      <Box mb="md" width="70%">
+        <Label>Порядковый номер </Label>
+        <Input
+          type="number"
+          min="1"
+          value={orderKey}
+          width="100%"
+          onChange={(e) => setOrderKey(e.target.value)}
+          placeholder="Введите номер"
+        />
       </Box>
-
       {/* Title */}
       <Box mb="md" width="70%">
         <Label>Заголовок</Label>
@@ -395,7 +407,7 @@ const CatalogCreate = () => {
           }}
           onChange={(e) => setSubtitle(e.target.value)}
         />
-      </Box>
+      </Box>{" "}
       {/* Price & meta */}
       <Box mb="md" width="70%" display="flex" gap="12px" alignItems="center">
         <Box width="30%">
@@ -442,7 +454,6 @@ const CatalogCreate = () => {
           />
         </Box>
       </Box>
-
       {/* Description */}
       <Box
         mb="md"
@@ -462,7 +473,6 @@ const CatalogCreate = () => {
           style={{ height: "300px" }}
         />
       </Box>
-
       {/* Properties */}
       <Box mb="md" width="70%">
         <Label>Свойства</Label>
@@ -510,12 +520,10 @@ const CatalogCreate = () => {
           ➕ Добавить свойство
         </Button>
       </Box>
-
       {/* Images */}
       <Label mb="lg" mt="xl" style={{ fontSize: "20px", fontWeight: "bold" }}>
         Изображения (максимум 10)
       </Label>
-
       {inputs.map((input, index) => (
         <Box
           key={input.id}
@@ -586,11 +594,9 @@ const CatalogCreate = () => {
           )}
         </Box>
       ))}
-
       <Button type="button" mt="lg" onClick={addInput} style={styles.addBtn}>
         ➕ Добавить изображение
       </Button>
-
       {/* Other Images */}
       <Label
         mb="lg"
@@ -599,7 +605,6 @@ const CatalogCreate = () => {
       >
         Дополнительные изображения
       </Label>
-
       {otherInputs.map((input, index) => (
         <Box key={input.id} mb="md" style={styles.fileBox}>
           <label style={styles.fileLabel}>
@@ -648,7 +653,6 @@ const CatalogCreate = () => {
           )}
         </Box>
       ))}
-
       <Button
         type="button"
         mt="lg"
@@ -657,7 +661,6 @@ const CatalogCreate = () => {
       >
         ➕ Добавить дополнительное изображение
       </Button>
-
       {/* Progress & Save */}
       {loading && (
         <Box width="70%" mt="md">
@@ -665,7 +668,6 @@ const CatalogCreate = () => {
           <progress value={progress} max="100" style={{ width: "100%" }} />
         </Box>
       )}
-
       <Button
         type="button"
         mt="lg"

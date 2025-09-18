@@ -38,6 +38,7 @@ const Catalog = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    order_key: DataTypes.INTEGER,
   },
   {
     sequelize,

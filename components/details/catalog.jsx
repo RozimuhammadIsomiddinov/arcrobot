@@ -15,7 +15,6 @@ const CatalogDetails = (props) => {
   const [catalog, setCatalog] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // universal array parser
   const parseArray = (field) => {
     if (Array.isArray(field)) return field;
     if (typeof field === "string") {
@@ -42,7 +41,6 @@ const CatalogDetails = (props) => {
         const images = parseArray(data.images);
         const other_images = parseArray(data.other_images);
 
-        // Property parse
         let property = {};
         if (typeof data.property === "string") {
           try {
@@ -180,6 +178,17 @@ const CatalogDetails = (props) => {
               </TableCell>
               <TableCell style={{ color: "#ccc" }}>{catalog.name}</TableCell>
             </TableRow>
+
+            {/* ✅ Yangi qator: order_key */}
+            <TableRow>
+              <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
+                Порядковый номер
+              </TableCell>
+              <TableCell style={{ color: "#ccc" }}>
+                {catalog.order_key ?? "—"}
+              </TableCell>
+            </TableRow>
+
             <TableRow>
               <TableCell style={{ fontWeight: "bold", color: "#fff" }}>
                 Подзаголовок
@@ -247,17 +256,14 @@ const CatalogDetails = (props) => {
         </Table>
       </div>
 
-      {/* Asosiy rasmlar */}
       {renderImages(catalog.images, "Изображения", false)}
 
-      {/* Qo'shimcha rasmlar */}
       {renderImages(
         catalog.other_images,
         "Дополнительные изображения (MARKER)",
         true
       )}
 
-      {/* Property */}
       <div style={cardStyle}>
         <h2 style={{ marginBottom: 15 }}>Свойства</h2>
         {catalog.property && Object.keys(catalog.property).length > 0 ? (
@@ -269,7 +275,6 @@ const CatalogDetails = (props) => {
         )}
       </div>
 
-      {/* Back button */}
       <Box display="flex" justifyContent="flex-end">
         <Button
           variant="primary"

@@ -18,6 +18,7 @@ const Blog = sequelize.define(
     author_image: DataTypes.TEXT,
     author_description: DataTypes.TEXT,
     author_phone: DataTypes.TEXT,
+    order_key: DataTypes.INTEGER,
   },
   {
     sequelize,

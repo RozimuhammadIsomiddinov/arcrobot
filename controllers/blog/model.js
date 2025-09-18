@@ -3,12 +3,17 @@ import Blog from "../../models/blog.js";
 const selectBlog = async (page = 1, pageSize = 10) => {
   const offset = (page - 1) * pageSize;
 
+  // jami yozuvlar soni
   const totalRecords = await Blog.count();
 
+  // asosiy ma’lumotlarni olish
   const data = await Blog.findAll({
     limit: pageSize,
     offset,
-    order: [["createdAt", "DESC"]],
+    order_key: [
+      ["order_key", "ASC"], // navbat bo‘yicha
+      ["createdAt", "DESC"], // fallback
+    ],
   });
 
   const totalPages = Math.ceil(totalRecords / pageSize);

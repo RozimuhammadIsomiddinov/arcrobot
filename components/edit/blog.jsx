@@ -116,6 +116,7 @@ const BlogEditImages = (props) => {
   const [newImages, setNewImages] = useState([]);
   const [authorImage, setAuthorImage] = useState(null);
   const [newAuthorImage, setNewAuthorImage] = useState(null);
+  const [orderKey, setOrderKey] = useState("");
 
   const [error, setError] = useState(null);
 
@@ -138,6 +139,7 @@ const BlogEditImages = (props) => {
         setAuthorPhone(data.author_phone || "");
         setAuthorImage(data.author_image || null);
         setImages(Array.isArray(data.images) ? data.images : []);
+        setOrderKey(data.order_key || "");
       } catch (err) {
         setError("Ошибка при получении данных");
         console.error(err);
@@ -193,6 +195,7 @@ const BlogEditImages = (props) => {
       formData.append("author_phone", authorPhone);
 
       formData.append("images", JSON.stringify(images));
+      formData.append("order_key", orderKey);
 
       Object.entries(updatedImages).forEach(([index, file]) => {
         formData.append(`updatedImages`, file);
@@ -229,6 +232,16 @@ const BlogEditImages = (props) => {
 
   return (
     <Box>
+      {" "}
+      {/* Order Key */}
+      <Box mb="md" width="50%">
+        <Label>Порядок</Label>
+        <Input
+          type="number"
+          value={orderKey}
+          onChange={(e) => setOrderKey(e.target.value)}
+        />
+      </Box>
       {/* Title */}
       <Box mb="md" width="50%">
         <Label>Заголовок</Label>
@@ -239,7 +252,6 @@ const BlogEditImages = (props) => {
           width="100%"
         />
       </Box>
-
       {/* Subtitles */}
       <Box mb="md" width="50%">
         <Label>Подзаголовок</Label>
@@ -261,7 +273,6 @@ const BlogEditImages = (props) => {
           width="100%"
         />
       </Box>
-
       {/* Description with CKEditor */}
       <Box
         mb="md"
@@ -281,7 +292,6 @@ const BlogEditImages = (props) => {
           style={{ height: "300px" }}
         />
       </Box>
-
       {/* Author Section */}
       <Box
         mb="md"
@@ -441,7 +451,6 @@ const BlogEditImages = (props) => {
           </Box>
         </Box>
       </Box>
-
       {/* Images */}
       <Box mb="md" width="60%">
         <Label>Изображения</Label>
@@ -531,7 +540,6 @@ const BlogEditImages = (props) => {
           ))}
         </Box>
       </Box>
-
       {/* Add new images */}
       <Box mb="md" width="50%">
         <Label>Добавить новые изображения</Label>
@@ -559,7 +567,6 @@ const BlogEditImages = (props) => {
           </Box>
         )}
       </Box>
-
       <Button variant="primary" mt="lg" onClick={handleSave}>
         Сохранить
       </Button>

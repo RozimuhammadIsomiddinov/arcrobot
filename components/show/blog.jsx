@@ -9,14 +9,13 @@ import {
   TableBody,
   Button,
   Modal,
-  Label,
 } from "@adminjs/design-system";
 import { useNavigate } from "react-router-dom";
 
 const BlogList = () => {
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const [sortAsc, setSortAsc] = useState(true);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -25,7 +24,7 @@ const BlogList = () => {
   const fetchBlogs = async () => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/blog"); // API endpoint
+      const res = await axios.get("/api/blog");
       setBlogs(res.data.data || []);
     } catch (err) {
       console.error("Error fetching blogs:", err);
@@ -52,42 +51,74 @@ const BlogList = () => {
     navigate(`/admin/resources/blog/records/${id}/edit`);
   };
 
-  if (loading) {
-    return <Box padding="xl">Загрузка...</Box>;
-  }
-
   const leftCellStyle = {
     fontWeight: "bold",
     borderRight: "2px solid #ccc",
     width: "180px",
   };
 
+  if (loading) {
+    return <Box padding="xl">Загрузка...</Box>;
+  }
+
+  // 🔽 Saralangan bloglar
+  const sortedBlogs = [...blogs].sort((a, b) => {
+    const valA = a.order_key ?? 0;
+    const valB = b.order_key ?? 0;
+    return sortAsc ? valA - valB : valB - valA;
+  });
+
   return (
     <Box variant="grey" padding="xl">
       <h2 style={{ marginBottom: 20 }}>Блоги</h2>
+
+      {/* Saralash tugmalari */}
+      <Box marginBottom="lg" display="flex" justifyContent="flex-end" gap="md">
+        <Button
+          size="sm"
+          variant={sortAsc ? "primary" : "outlined"}
+          onClick={() => setSortAsc(true)}
+        >
+          ↑ По порядку (возрастание)
+        </Button>
+        <Button
+          size="sm"
+          variant={!sortAsc ? "primary" : "outlined"}
+          onClick={() => setSortAsc(false)}
+        >
+          ↓ По порядку (убывание)
+        </Button>
+      </Box>
+
+      {/* Jadval */}
       <Table>
         <TableHead>
           <TableRow>
             <TableCell style={leftCellStyle}>ID</TableCell>
             <TableCell style={leftCellStyle}>Заголовок</TableCell>
+            <TableCell style={leftCellStyle}>Порядок</TableCell>
             <TableCell style={leftCellStyle}>Телефон Автора</TableCell>
             <TableCell style={leftCellStyle}>Изображения</TableCell>
             <TableCell style={leftCellStyle}>Дата создания</TableCell>
             <TableCell>Действия</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
-          {blogs.length === 0 ? (
+          {sortedBlogs.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} style={{ textAlign: "center" }}>
+              <TableCell colSpan={7} style={{ textAlign: "center" }}>
                 Нет данных
               </TableCell>
             </TableRow>
           ) : (
-            blogs.map((blog) => (
+            sortedBlogs.map((blog) => (
               <TableRow key={blog.id}>
                 <TableCell style={leftCellStyle}>{blog.id}</TableCell>
                 <TableCell style={leftCellStyle}>{blog.title}</TableCell>
+                <TableCell style={leftCellStyle}>
+                  {blog.order_key ?? "—"}
+                </TableCell>
                 <TableCell style={leftCellStyle}>{blog.author_phone}</TableCell>
                 <TableCell style={leftCellStyle}>
                   {Array.isArray(blog.images) ? (
@@ -129,15 +160,10 @@ const BlogList = () => {
         </TableBody>
       </Table>
 
+      {/* Modal */}
       {modalOpen && selectedBlog && (
         <Modal open={modalOpen} onClose={() => setModalOpen(false)} width={700}>
-          <Box
-            padding="xl"
-            style={{
-              maxHeight: "70vh",
-              overflowY: "auto",
-            }}
-          >
+          <Box padding="xl" style={{ maxHeight: "70vh", overflowY: "auto" }}>
             <h1 style={{ marginBottom: 20 }}>
               📄 Детали блога #{selectedBlog.id}
             </h1>
@@ -146,6 +172,10 @@ const BlogList = () => {
                 <TableRow>
                   <TableCell style={leftCellStyle}>Заголовок</TableCell>
                   <TableCell>{selectedBlog.title}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell style={leftCellStyle}>Порядок</TableCell>
+                  <TableCell>{selectedBlog.order_key ?? "—"}</TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell style={leftCellStyle}>Подзаголовок</TableCell>
@@ -183,8 +213,6 @@ const BlogList = () => {
                     />
                   </TableCell>
                 </TableRow>
-
-                {/* 🆕 Author ma’lumotlari */}
                 <TableRow>
                   <TableCell style={leftCellStyle}>Автор</TableCell>
                   <TableCell>{selectedBlog.author_name || "—"}</TableCell>
@@ -208,7 +236,6 @@ const BlogList = () => {
                     )}
                   </TableCell>
                 </TableRow>
-
                 <TableRow>
                   <TableCell style={leftCellStyle}>Телефон Автора</TableCell>
                   <TableCell>
@@ -228,14 +255,12 @@ const BlogList = () => {
                     )}
                   </TableCell>
                 </TableRow>
-
                 <TableRow>
                   <TableCell style={leftCellStyle}>О авторе</TableCell>
                   <TableCell>
                     {selectedBlog.author_description || "—"}
                   </TableCell>
                 </TableRow>
-
                 <TableRow>
                   <TableCell style={leftCellStyle}>Дата создания</TableCell>
                   <TableCell>

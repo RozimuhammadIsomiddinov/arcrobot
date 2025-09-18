@@ -133,6 +133,7 @@ const CatalogEdit = (props) => {
   const [isDiscount, setIsDiscount] = useState(false);
   const [deliveryDays, setDeliveryDays] = useState("");
   const [storageDays, setStorageDays] = useState("");
+  const [orderKey, setOrderKey] = useState("");
 
   useEffect(() => {
     addPrimeStyles();
@@ -159,6 +160,8 @@ const CatalogEdit = (props) => {
         setIsDiscount(Boolean(data.isDiscount));
         setDeliveryDays(data.delivery_days || "");
         setStorageDays(data.storage_days || "");
+        setOrderKey(data.order_key || "");
+
         // Images parse
         let parsedImages = [];
         if (typeof data.images === "string") {
@@ -323,6 +326,8 @@ const CatalogEdit = (props) => {
       formData.append("isDiscount", isDiscount);
       formData.append("delivery_days", deliveryDays);
       formData.append("storage_days", storageDays);
+      formData.append("order_key", orderKey);
+
       formData.append(
         "property",
         JSON.stringify(
@@ -374,6 +379,16 @@ const CatalogEdit = (props) => {
 
   return (
     <Box>
+      {" "}
+      {/* Order Key */}
+      <Box mb="md" width="50%">
+        <Label>Порядок</Label>
+        <Input
+          type="number"
+          value={orderKey}
+          onChange={(e) => setOrderKey(e.target.value)}
+        />
+      </Box>
       {/* Name */}
       <Box mb="md" width="50%">
         <Label>Имя</Label>
@@ -384,7 +399,6 @@ const CatalogEdit = (props) => {
           width="100%"
         />
       </Box>
-
       {/* Title */}
       <Box mb="md" width="50%">
         <Label>Заголовок</Label>
@@ -406,7 +420,6 @@ const CatalogEdit = (props) => {
           width="100%"
         />
       </Box>
-
       {/* Subtitle  */}
       <Box mb="md" width="50%">
         <Label>Подзаголовок</Label>
@@ -436,7 +449,6 @@ const CatalogEdit = (props) => {
           style={{ height: "300px" }}
         />
       </Box>
-
       {/* Images */}
       <Box mb="md" mt="xl" width="60%">
         <h1>Основные изображения</h1>
@@ -526,7 +538,6 @@ const CatalogEdit = (props) => {
           ))}
         </Box>
       </Box>
-
       {/* Add new images */}
       <Box mb="md" mt="xl" width="50%">
         <Label>Добавить новые основные изображения</Label>
@@ -555,7 +566,6 @@ const CatalogEdit = (props) => {
           </Box>
         )}
       </Box>
-
       {/* Other Images */}
       <Box mb="md" mt="xl" width="60%">
         <h1>Дополнительные изображения (MARKER)</h1>
@@ -647,7 +657,6 @@ const CatalogEdit = (props) => {
           ))}
         </Box>
       </Box>
-
       {/* Add new other images */}
       <Box mb="md" mt="xl" width="50%">
         <h1>Добавить новые дополнительные изображения (MARKER)</h1>
@@ -718,7 +727,6 @@ const CatalogEdit = (props) => {
           width="100%"
         />
       </Box>
-
       {/* Is Discount */}
       <Box mb="md" width="50%">
         <Label>наличными</Label>
@@ -730,7 +738,6 @@ const CatalogEdit = (props) => {
         />{" "}
         <span style={{ color: "white" }}>Есть наличными?</span>
       </Box>
-
       {/* Delivery days */}
       <Box mb="md" width="50%">
         <Label>Срок доставки (дней)</Label>
@@ -742,7 +749,6 @@ const CatalogEdit = (props) => {
           width="100%"
         />
       </Box>
-
       {/* Storage days */}
       <Box mb="md" width="50%">
         <Label>Срок хранения (дней)</Label>
@@ -754,7 +760,6 @@ const CatalogEdit = (props) => {
           width="100%"
         />
       </Box>
-
       <Button variant="primary" mt="lg" onClick={handleSave}>
         Сохранить
       </Button>

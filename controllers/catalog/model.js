@@ -1,7 +1,7 @@
 import Catalog from "../../models/catalog.js";
 import ImagePosition from "../../models/imageposition.js";
 
-const getAllCatalog = async (page = 1, pageSize = 10) => {
+const getAllCatalog = async (page = 1, pageSize = 10000) => {
   const offset = (page - 1) * pageSize;
 
   const totalRecords = await Catalog.count();
@@ -9,7 +9,7 @@ const getAllCatalog = async (page = 1, pageSize = 10) => {
   const data = await Catalog.findAll({
     limit: pageSize,
     offset,
-    order: [["createdAt", "DESC"]],
+    order_key: [["order_key", "DESC"]],
   });
 
   const totalPages = Math.ceil(totalRecords / pageSize);
@@ -30,6 +30,7 @@ const getAllCatalog = async (page = 1, pageSize = 10) => {
 
 const parsePgArray = (pgArrayString) => {
   if (!pgArrayString) return [];
+  if (Array.isArray(pgArrayString)) return pgArrayString;
   return pgArrayString
     .replace(/^{|}$/g, "")
     .split(",")

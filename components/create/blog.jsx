@@ -50,7 +50,7 @@ const BlogCreate = () => {
   const [authorDescription, setAuthorDescription] = useState("");
   const [authorImage, setAuthorImage] = useState(null);
   const [authorPhone, setAuthorPhone] = useState(""); // qo‘shildi
-
+  const [orderKey, setOrderKey] = useState("");
   // PrimeReact stillarini komponent yuklanganda qo'shish
   useEffect(() => {
     addPrimeStyles();
@@ -83,6 +83,7 @@ const BlogCreate = () => {
       formData.append("title", title);
       formData.append("subtitles", subtitles);
       formData.append("description", description);
+      if (orderKey) formData.append("order_key", orderKey);
 
       // author data
       formData.append("author_name", authorName);
@@ -208,6 +209,18 @@ const BlogCreate = () => {
           placeholder="Введите подзаголовок"
         />
       </Box>
+      <Box mb="md" width="50%">
+        <Label>Порядковый номер </Label>
+        <Input
+          type="number"
+          min="1"
+          value={orderKey}
+          width="100%"
+          onChange={(e) => setOrderKey(e.target.value)}
+          placeholder="Введите номер"
+        />
+      </Box>
+
       {/* Description - PrimeReact Editor */}
       <Box
         mb="md"

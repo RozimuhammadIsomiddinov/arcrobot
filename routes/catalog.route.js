@@ -8,6 +8,7 @@ import {
 } from "../controllers/catalog/catalog.js";
 import upload from "../middleware/multer.js";
 import Catalog from "../models/catalog.js";
+import { Op } from "sequelize";
 
 const router = express.Router();
 
@@ -134,6 +135,7 @@ router.get("/home", getHomeCatalogsCont); // isHome = true bo'lgan cataloglar
 
 router.get("/", getAllCatalogCont);
 router.get("/:id", getCatalogByIDCont);
+
 router.post(
   "/create",
   upload.fields([
@@ -142,7 +144,7 @@ router.post(
   ]),
   async (req, res) => {
     try {
-      // Fayllar kelmagan bo‘lsa
+      // 1️⃣ Fayllarni tekshirish
       if (
         (!req.files?.files || req.files.files.length === 0) &&
         (!req.files?.other_files || req.files.other_files.length === 0)
@@ -150,14 +152,13 @@ router.post(
         return res.status(400).json({ error: "Hech qanday fayl yuklanmadi" });
       }
 
-      // Asosiy images
+      // 2️⃣ Asosiy images va other_images yo‘llarini shakllantirish
       const imagePaths = req.files?.files
         ? req.files.files.map(
             (file) => `${process.env.BACKEND_URL}/${file.filename}`
           )
         : [];
 
-      // Qo‘shimcha other_images
       const otherImagePaths = req.files?.other_files
         ? req.files.other_files.map(
             (file) => `${process.env.BACKEND_URL}/${file.filename}`
@@ -186,6 +187,24 @@ router.post(
       const { price, isDiscount, delivery_days, storage_days, subtitle } =
         req.body;
 
+      // 3️⃣ order_key logikasi
+      let orderKey = req.body.order_key
+        ? parseInt(req.body.order_key, 10)
+        : null;
+
+      if (orderKey && !isNaN(orderKey)) {
+        // Agar shu tartib (order_key) band bo‘lsa — keyingilarni surib chiqamiz
+        await Catalog.increment("order_key", {
+          by: 1,
+          where: { order_key: { [Op.gte]: orderKey } },
+        });
+      } else {
+        // Foydalanuvchi kiritmagan bo‘lsa, oxirgi raqamdan keyingisini qo‘yamiz
+        const maxOrder = await Catalog.max("order_key");
+        orderKey = (maxOrder || 0) + 1;
+      }
+
+      // 4️⃣ Yangi catalog yaratish
       const catalog = await Catalog.create({
         name,
         title,
@@ -198,11 +217,16 @@ router.post(
         isDiscount,
         delivery_days,
         storage_days,
+        order_key: orderKey, // 👉 order_key qo‘shildi
       });
 
-      res.json({ success: true, data: catalog });
+      res.json({
+        success: true,
+        message: "Catalog saqlandi",
+        data: catalog,
+      });
     } catch (error) {
-      console.error(error);
+      console.error("Xatolik:", error);
       res.status(500).json({ error: "Xatolik yuz berdi" });
     }
   }
@@ -226,6 +250,7 @@ router.put(
         }
       };
 
+      // 🔹 Asosiy images
       let imagesFromClient = safeParse(req.body.images, []);
 
       if (req.files?.updatedImages) {
@@ -246,6 +271,7 @@ router.put(
         imagesFromClient.push(...newImageUrls);
       }
 
+      // 🔹 Other images
       let otherImagesFromClient = safeParse(req.body.other_images, []);
 
       if (req.files?.updatedOtherImages) {
@@ -266,17 +292,46 @@ router.put(
         otherImagesFromClient.push(...newOtherImageUrls);
       }
 
+      // 🔹 JSON maydonlar
       const property = safeParse(req.body.property, {});
 
-      const { price, isDiscount, delivery_days, storage_days, subtitle } =
-        req.body;
+      // 🔹 order_key logikasi
+      let orderKey = req.body.order_key
+        ? parseInt(req.body.order_key, 10)
+        : null;
+
+      if (orderKey && !isNaN(orderKey)) {
+        // Shu tartibni boshqa cataloglar bilan moslashtirish
+        await Catalog.increment("order_key", {
+          by: 1,
+          where: {
+            order_key: { [Op.gte]: orderKey },
+            id: { [Op.ne]: req.params.id }, // o‘zini surish emas
+          },
+        });
+      } else {
+        // Kiritilmagan bo‘lsa, oxirgi raqamdan keyingisini qo‘yamiz
+        const maxOrder = await Catalog.max("order_key");
+        orderKey = (maxOrder || 0) + 1;
+      }
+
+      const {
+        name,
+        title,
+        subtitle,
+        description,
+        price,
+        isDiscount,
+        delivery_days,
+        storage_days,
+      } = req.body;
 
       const [affectedCount, updatedRows] = await Catalog.update(
         {
-          name: req.body.name,
-          title: req.body.title,
-          subtitle: subtitle,
-          description: req.body.description,
+          name,
+          title,
+          subtitle,
+          description,
           property,
           images: imagesFromClient,
           other_images: otherImagesFromClient,
@@ -284,6 +339,7 @@ router.put(
           isDiscount,
           delivery_days,
           storage_days,
+          order_key: orderKey, // 🔹 order_key qo‘shildi
         },
         {
           where: { id: req.params.id },
@@ -300,16 +356,15 @@ router.put(
 
       res.json({
         success: true,
-        message: "Каталог успешно обновлен",
+        message: "Catalog muvaffaqiyatli yangilandi",
         data: updatedRows[0],
       });
     } catch (error) {
       console.error("Update error:", error);
-      res.status(500).json({ success: false, message: "Ошибка сервера" });
+      res.status(500).json({ success: false, message: "Server xatoligi" });
     }
   }
 );
-
 router.post("/home", setCatalogHomeCont);
 router.delete("/home/:id", unsetCatalogHomeCont);
 

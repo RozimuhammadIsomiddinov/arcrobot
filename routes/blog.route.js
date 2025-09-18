@@ -6,6 +6,7 @@ import {
 } from "../controllers/blog/blog.js";
 import Blog from "../models/blog.js";
 import upload from "../middleware/multer.js";
+import { Op } from "sequelize";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -129,6 +130,7 @@ const router = express.Router();
 
 router.get("/", selectAllBlogCont);
 router.get("/:id", selectBlogByIDCont);
+
 router.post(
   "/create",
   upload.fields([
@@ -137,32 +139,49 @@ router.post(
   ]),
   async (req, res) => {
     try {
+      // 1️⃣ Fayllarni tekshirish
       if (!req.files || !req.files["files"]) {
         return res.status(400).json({ error: "Hech qanday fayl yuklanmadi" });
       }
 
+      // 2️⃣ Rasm yo‘llarini shakllantirish
       const imagePaths = req.files["files"].map(
         (file) => `${process.env.BACKEND_URL}/${file.filename}`
       );
 
       let authorImagePath = null;
-      if (req.files["author_image"] && req.files["author_image"][0]) {
+      if (req.files["author_image"]?.[0]) {
         authorImagePath = `${process.env.BACKEND_URL}/${req.files["author_image"][0].filename}`;
       }
 
+      // 3️⃣ order_key logikasi
+      let orderKey = req.body.order_key
+        ? parseInt(req.body.order_key, 10)
+        : null;
+
+      if (orderKey && !isNaN(orderKey)) {
+        // Agar shu tartib (order_key) band bo‘lsa — keyingilarni surib chiqamiz
+        await Blog.increment("order_key", {
+          by: 1,
+          where: { order_key: { [Op.gte]: orderKey } },
+        });
+      } else {
+        // Foydalanuvchi kiritmagan bo‘lsa, oxirgi raqamdan keyingisini qo‘yamiz
+        const maxOrder = await Blog.max("order_key");
+        orderKey = (maxOrder || 0) + 1;
+      }
+
+      // 4️⃣ Yangi blog yaratish
       const newBlog = await Blog.create({
         title: req.body.title,
         subtitles: req.body.subtitles,
         description: req.body.description,
         images: imagePaths,
-
         author_name: req.body.author_name,
         author_image: authorImagePath,
         author_description: req.body.author_description,
         author_phone: req.body.author_phone,
-
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        order_key: orderKey, // 👉 to‘g‘ri maydon nomi
       });
 
       res.json({

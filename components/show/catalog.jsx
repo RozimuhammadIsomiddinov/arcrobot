@@ -15,7 +15,8 @@ const CatalogList = () => {
   const [catalogs, setCatalogs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedHomeIds, setSelectedHomeIds] = useState([]);
-  const [showOnlyHome, setShowOnlyHome] = useState(false); // toggle faqat home uchun
+  const [showOnlyHome, setShowOnlyHome] = useState(false);
+  const [sortAsc, setSortAsc] = useState(true); // 🔹 Yangi holat
   const navigate = useNavigate();
 
   const fetchCatalogs = async () => {
@@ -54,11 +55,9 @@ const CatalogList = () => {
   }, []);
 
   const toggleSelect = (id) => {
-    if (selectedHomeIds.includes(id)) {
-      setSelectedHomeIds(selectedHomeIds.filter((hid) => hid !== id));
-    } else {
-      setSelectedHomeIds([...selectedHomeIds, id]);
-    }
+    setSelectedHomeIds((prev) =>
+      prev.includes(id) ? prev.filter((hid) => hid !== id) : [...prev, id]
+    );
   };
 
   const setAsHome = async (id) => {
@@ -85,9 +84,7 @@ const CatalogList = () => {
     }
   };
 
-  if (loading) {
-    return <Box padding="xl">Загрузка...</Box>;
-  }
+  if (loading) return <Box padding="xl">Загрузка...</Box>;
 
   const leftCellStyle = { fontWeight: "bold", borderRight: "2px solid #ccc" };
   const textCellStyle = {
@@ -99,24 +96,49 @@ const CatalogList = () => {
     maxWidth: 200,
   };
 
-  // toggle holatiga qarab cataloglarni filtrlaymiz
-  const displayedCatalogs = showOnlyHome
+  // 🔽 Avval home filtrini qo‘llaymiz
+  const filteredCatalogs = showOnlyHome
     ? catalogs.filter((cat) => cat.isHome)
     : catalogs;
+
+  // 🔽 key bo‘yicha saralaymiz
+  const sortedCatalogs = [...filteredCatalogs].sort((a, b) => {
+    const valA = a.order_key ?? 0;
+    const valB = b.order_key ?? 0;
+    return sortAsc ? valA - valB : valB - valA;
+  });
 
   return (
     <Box variant="grey" padding="xl">
       <h2 style={{ marginBottom: 20 }}>Каталог</h2>
 
-      <Box marginBottom="lg">
-        <label style={{ marginRight: 10 }}>
+      {/* Faqat home & Saralash tugmalari */}
+      <Box marginBottom="lg" display="flex" justifyContent="space-between">
+        <label>
           <input
             type="checkbox"
             checked={showOnlyHome}
-            onChange={() => setShowOnlyHome(!showOnlyHome)}
+            onChange={() => setShowOnlyHome((p) => !p)}
           />{" "}
           Показать только домашнюю страницу
         </label>
+
+        <Box display="flex" gap="md">
+          <Button
+            size="sm"
+            variant={sortAsc ? "primary" : "outlined"}
+            onClick={() => setSortAsc(true)}
+          >
+            ↑ По порядку (возрастание)
+          </Button>
+          <Button
+            size="sm"
+            variant={!sortAsc ? "primary" : "outlined"}
+            onClick={() => setSortAsc(false)}
+          >
+            ↓ По порядку (убывание)
+          </Button>
+        </Box>
       </Box>
 
       <Table>
@@ -124,6 +146,7 @@ const CatalogList = () => {
           <TableRow>
             <TableCell style={leftCellStyle}>ID</TableCell>
             <TableCell style={textCellStyle}>Название</TableCell>
+            <TableCell style={leftCellStyle}>Порядок</TableCell>
             <TableCell style={leftCellStyle}>Изображения</TableCell>
             <TableCell style={leftCellStyle}>Доп. изображения</TableCell>
             <TableCell style={leftCellStyle}>Дата создания</TableCell>
@@ -131,19 +154,23 @@ const CatalogList = () => {
             <TableCell>Home</TableCell>
           </TableRow>
         </TableHead>
+
         <TableBody>
-          {displayedCatalogs.length === 0 ? (
+          {sortedCatalogs.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} style={{ textAlign: "center" }}>
+              <TableCell colSpan={8} style={{ textAlign: "center" }}>
                 Нет данных
               </TableCell>
             </TableRow>
           ) : (
-            displayedCatalogs.map((catalog) => (
+            sortedCatalogs.map((catalog) => (
               <TableRow key={catalog.id}>
                 <TableCell style={leftCellStyle}>{catalog.id}</TableCell>
                 <TableCell style={textCellStyle} title={catalog.name}>
                   {catalog.name}
+                </TableCell>
+                <TableCell style={leftCellStyle}>
+                  {catalog.order_key ?? "—"}
                 </TableCell>
 
                 <TableCell style={leftCellStyle}>
@@ -199,7 +226,7 @@ const CatalogList = () => {
                         `/admin/resources/catalog/records/${catalog.id}/show`
                       )
                     }
-                    style={{ marginRight: "8px" }}
+                    style={{ marginRight: 8 }}
                   >
                     Подробнее
                   </Button>
