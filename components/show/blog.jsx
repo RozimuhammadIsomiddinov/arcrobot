@@ -19,13 +19,26 @@ const BlogList = () => {
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [nextPage, setNextPage] = useState(null);
+  const [prevPage, setPrevPage] = useState(null);
+
   const navigate = useNavigate();
 
-  const fetchBlogs = async () => {
+  const fetchBlogs = async (pageNumber = 1) => {
+    const pageSize = 10;
     setLoading(true);
     try {
-      const res = await axios.get("/api/blog");
+      const res = await axios.get("/api/blog", {
+        params: { page: pageNumber, pageSize },
+      });
+
       setBlogs(res.data.data || []);
+      setPage(res.data.pagination.current_page || 1);
+      setTotalPages(res.data.pagination.total_pages || 1);
+      setNextPage(res.data.pagination.next_page);
+      setPrevPage(res.data.pagination.prev_page);
     } catch (err) {
       console.error("Error fetching blogs:", err);
     } finally {
@@ -159,6 +172,23 @@ const BlogList = () => {
           )}
         </TableBody>
       </Table>
+      {/* Pagination */}
+      <Button
+        size="sm"
+        variant="outlined"
+        disabled={!prevPage}
+        onClick={() => fetchBlogs(prevPage)}
+      >
+        ← Предыдущая
+      </Button>
+      <Button
+        size="sm"
+        variant="outlined"
+        disabled={!nextPage}
+        onClick={() => fetchBlogs(nextPage)}
+      >
+        Следующая →
+      </Button>
 
       {/* Modal */}
       {modalOpen && selectedBlog && (

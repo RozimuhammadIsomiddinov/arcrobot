@@ -16,13 +16,21 @@ const CatalogList = () => {
   const [loading, setLoading] = useState(true);
   const [selectedHomeIds, setSelectedHomeIds] = useState([]);
   const [showOnlyHome, setShowOnlyHome] = useState(false);
-  const [sortAsc, setSortAsc] = useState(true); // 🔹 Yangi holat
+  const [sortAsc, setSortAsc] = useState(true);
+
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [nextPage, setNextPage] = useState(null);
+  const [prevPage, setPrevPage] = useState(null);
+
   const navigate = useNavigate();
 
-  const fetchCatalogs = async () => {
+  const fetchCatalogs = async (pageNumber = 1) => {
     setLoading(true);
     try {
-      const res = await axios.get("/api/catalog");
+      const res = await axios.get("/api/catalog", {
+        params: { page: pageNumber },
+      });
       const data = res.data.data || [];
 
       const normalizeArray = (field) => {
@@ -43,6 +51,10 @@ const CatalogList = () => {
       }));
 
       setCatalogs(normalized);
+      setPage(res.data.pagination.current_page);
+      setTotalPages(res.data.pagination.total_pages);
+      setNextPage(res.data.pagination.next_page);
+      setPrevPage(res.data.pagination.prev_page);
     } catch (err) {
       console.error("Error fetching catalogs:", err);
     } finally {
@@ -96,12 +108,12 @@ const CatalogList = () => {
     maxWidth: 200,
   };
 
-  // 🔽 Avval home filtrini qo‘llaymiz
+  // Home bo‘yicha filtr
   const filteredCatalogs = showOnlyHome
     ? catalogs.filter((cat) => cat.isHome)
     : catalogs;
 
-  // 🔽 key bo‘yicha saralaymiz
+  // order_key bo‘yicha sort
   const sortedCatalogs = [...filteredCatalogs].sort((a, b) => {
     const valA = a.order_key ?? 0;
     const valB = b.order_key ?? 0;
@@ -112,7 +124,7 @@ const CatalogList = () => {
     <Box variant="grey" padding="xl">
       <h2 style={{ marginBottom: 20 }}>Каталог</h2>
 
-      {/* Faqat home & Saralash tugmalari */}
+      {/* Faqat Home + Saralash tugmalari */}
       <Box marginBottom="lg" display="flex" justifyContent="space-between">
         <label>
           <input
@@ -141,6 +153,7 @@ const CatalogList = () => {
         </Box>
       </Box>
 
+      {/* Jadval */}
       <Table>
         <TableHead>
           <TableRow>
@@ -172,51 +185,43 @@ const CatalogList = () => {
                 <TableCell style={leftCellStyle}>
                   {catalog.order_key ?? "—"}
                 </TableCell>
-
                 <TableCell style={leftCellStyle}>
-                  {catalog.images.length > 0 ? (
-                    catalog.images.map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={img}
-                        alt={`catalog-img-${idx}`}
-                        style={{
-                          height: 40,
-                          marginRight: 5,
-                          borderRadius: 4,
-                          objectFit: "cover",
-                        }}
-                      />
-                    ))
-                  ) : (
-                    <span>—</span>
-                  )}
+                  {catalog.images.length > 0
+                    ? catalog.images.map((img, idx) => (
+                        <img
+                          key={idx}
+                          src={img}
+                          alt={`catalog-img-${idx}`}
+                          style={{
+                            height: 40,
+                            marginRight: 5,
+                            borderRadius: 4,
+                            objectFit: "cover",
+                          }}
+                        />
+                      ))
+                    : "—"}
                 </TableCell>
-
                 <TableCell style={leftCellStyle}>
-                  {catalog.other_images.length > 0 ? (
-                    catalog.other_images.map((img, idx) => (
-                      <img
-                        key={idx}
-                        src={img}
-                        alt={`other-img-${idx}`}
-                        style={{
-                          height: 40,
-                          marginRight: 5,
-                          borderRadius: 4,
-                          objectFit: "cover",
-                        }}
-                      />
-                    ))
-                  ) : (
-                    <span>—</span>
-                  )}
+                  {catalog.other_images.length > 0
+                    ? catalog.other_images.map((img, idx) => (
+                        <img
+                          key={idx}
+                          src={img}
+                          alt={`other-img-${idx}`}
+                          style={{
+                            height: 40,
+                            marginRight: 5,
+                            borderRadius: 4,
+                            objectFit: "cover",
+                          }}
+                        />
+                      ))
+                    : "—"}
                 </TableCell>
-
                 <TableCell style={leftCellStyle}>
                   {new Date(catalog.createdAt).toLocaleString()}
                 </TableCell>
-
                 <TableCell>
                   <Button
                     size="sm"
@@ -242,7 +247,6 @@ const CatalogList = () => {
                     Редактировать
                   </Button>
                 </TableCell>
-
                 <TableCell style={{ textAlign: "center" }}>
                   {catalog.isHome ? (
                     <Button
@@ -277,6 +281,29 @@ const CatalogList = () => {
           )}
         </TableBody>
       </Table>
+
+      {/* Pagination */}
+      <Box display="flex" justifyContent="center" marginTop="lg" gap="md">
+        <Button
+          size="sm"
+          variant="outlined"
+          disabled={!prevPage}
+          onClick={() => fetchCatalogs(prevPage)}
+        >
+          ← Предыдущая
+        </Button>
+        <span style={{ alignSelf: "center", color: "white" }}>
+          {page} / {totalPages}
+        </span>
+        <Button
+          size="sm"
+          variant="outlined"
+          disabled={!nextPage}
+          onClick={() => fetchCatalogs(nextPage)}
+        >
+          Следующая →
+        </Button>
+      </Box>
     </Box>
   );
 };
